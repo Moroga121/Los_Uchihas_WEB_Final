@@ -1,0 +1,86 @@
+﻿@page
+@model Proyecto_Nuevo_Avatar_V2.Pages.IPN3.IndexModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Administrar Notificaciones";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/ADM_Usuarios.css" />
+
+<h2 class="text-center">Administrar Notificaciones</h2>
+
+<p>
+    <a asp-page="/IPN3/Create" class="btn btn-primary">
+        <i class="fas fa-plus-circle"></i> Nueva Notificación
+    </a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Fecha de Envío</th>
+            <th>Destinatario(s)</th>
+            <th>Asunto</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Notificaciones != null && Model.Notificaciones.Any())
+        {
+            @foreach (var notificacion in Model.Notificaciones)
+            {
+                <tr>
+                    <td data-label="" class="text-break">@notificacion.FechaEnvio.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                    <td data-label="" class="text-break">@notificacion.Email_Destinatario</td>
+                    <td data-label="" class="text-break">@notificacion.Asunto</td>
+                    <td data-label="" class="text-break">@notificacion.Estado</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">No hay notificaciones disponibles.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.TotalPaginas > 1)
+{
+    <div id="paginacion" class="my-3 d-flex justify-content-center">
+        <nav aria-label="Paginación de parámetros">
+            <ul class="pagination pagination-sm mb-0">
+                <!-- Botón Página Anterior -->
+                @if (Model.PaginaActual > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="?numeroPagina=@(Model.PaginaActual - 1)" aria-label="Anterior">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                }
+
+                <!-- Números de Página -->
+                @for (int i = 1; i <= Model.TotalPaginas; i++)
+                {
+                    <li class="page-item @(i == Model.PaginaActual ? "active" : "")">
+                        <a class="page-link" href="?numeroPagina=@i">@i</a>
+                    </li>
+                }
+
+                <!-- Botón Página Siguiente -->
+                @if (Model.PaginaActual < Model.TotalPaginas)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="?numeroPagina=@(Model.PaginaActual + 1)" aria-label="Siguiente">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+}

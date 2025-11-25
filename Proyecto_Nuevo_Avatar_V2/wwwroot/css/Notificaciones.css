@@ -1,0 +1,111 @@
+﻿
+h2.text-center {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+
+.notificaciones-container {
+    max-height: calc(100vh - 180px); 
+    overflow-y: auto;
+    padding-right: 10px;
+    scrollbar-width: thin; 
+}
+
+    
+    .notificaciones-container::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .notificaciones-container::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 4px;
+    }
+
+        .notificaciones-container::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+
+
+.notificacion-card {
+    border-left: 4px solid #007bff;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+    .notificacion-card:hover {
+        transform: scale(1.01);
+        box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    }
+
+
+.notificacion-success {
+    border-left-color: #28a745;
+}
+
+.notificacion-failed {
+    border-left-color: #dc3545;
+}
+
+.notificacion-info {
+    border-left-color: #17a2b8;
+}
+
+
+.notificacion-fecha {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+
+.text-center.text-muted {
+    margin-top: 2rem;
+    font-style: italic;
+}
+
+
+@media (max-width: 768px) {
+    h2.text-center {
+        font-size: 1.4rem;
+    }
+
+    .notificacion-card {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+
+    .notificacion-fecha {
+        font-size: 0.8rem;
+    }
+
+    .notificaciones-container {
+        max-height: calc(100vh - 150px);
+        padding: 0 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .notificacion-card {
+        padding: 10px;
+        border-left-width: 3px;
+        font-size: 0.9rem;
+    }
+
+    .notificaciones-container {
+        max-height: calc(100vh - 130px);
+    }
+
+    .btn.btn-secondary {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}

@@ -1,0 +1,211 @@
+﻿@page
+@model Proyecto_Nuevo_Avatar_V2.Pages.ACA1.IndexModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Consultar Promedios";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/ADM_Usuarios.css" />
+
+<h2 class="text-center">Consultar Promedios Académicos</h2>
+
+<form method="post" asp-page-handler="Buscar" id="filtroForm" class="mb-4">
+    <div class="row g-3 align-items-center">
+        <div class="col-md-2">
+            <label asp-for="TipoIdentificacion" class="form-label">Tipo de Identificación</label>
+            <select asp-for="TipoIdentificacion" class="form-select" required>
+                <option value="">Seleccione...</option>
+                <option value="CED">Cédula</option>
+                <option value="PSP">Pasaporte</option>
+                <option value="DMX">DIMEX</option>
+            </select>
+            <span asp-validation-for="TipoIdentificacion" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-2">
+            <label asp-for="NumeroIdentificacion" class="form-label">Identificación</label>
+            <select asp-for="NumeroIdentificacion" class="form-select" required>
+                <option value="">Seleccione...</option>
+                <option value="305620557">305620557</option>
+                <option value="208990123">208990123</option>
+                <option value="509230789">509230789</option>
+                <option value="605330888">605330888</option>
+                <option value="402560334">402560334</option>
+                <option value="308910442">308910442</option>
+                <option value="209440221">209440221</option>
+                <option value="P00123456">P00123456</option>
+                <option value="309870551">309870551</option>
+                <option value="509661099">509661099</option>
+                <option value="304441201">304441201</option>
+                <option value="210012555">210012555</option>
+            </select>
+            <span asp-validation-for="NumeroIdentificacion" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-2">
+            <label asp-for="Año" class="form-label">Año</label>
+            <select asp-for="Año" class="form-select">
+                <option value="">Todos</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label asp-for="Periodo" class="form-label">Periodo</label>
+            <select asp-for="Periodo" asp-items="Model.Periodos" class="form-select">
+                <option value="">Todos</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="mt-3 text-end">
+        <button type="submit" class="btn btn-success" id="btnBuscar">
+            <i class="bi bi-search"></i> Buscar
+        </button>
+
+        <a asp-page="Index" class="btn btn-secondary">
+            <i class="bi bi-eraser"></i> Limpiar
+        </a>
+    </div>
+</form>
+
+@if (Model.Notas != null && Model.Notas.Any())
+{
+    <div class="mb-3 text-end">
+        <form method="post" asp-page-handler="ExportCSV" style="display: inline;">
+            <input type="hidden" name="TipoIdentificacion" value="@Model.TipoIdentificacion" />
+            <input type="hidden" name="NumeroIdentificacion" value="@Model.NumeroIdentificacion" />
+            <input type="hidden" name="Año" value="@Model.Año" />
+            <input type="hidden" asp-for="Periodo" />
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-file-csv"></i> Exportar a CSV
+            </button>
+        </form>
+        <form method="post" asp-page-handler="ExportPDF" style="display: inline;">
+            <input type="hidden" name="TipoIdentificacion" value="@Model.TipoIdentificacion" />
+            <input type="hidden" name="NumeroIdentificacion" value="@Model.NumeroIdentificacion" />
+            <input type="hidden" name="Año" value="@Model.Año" />
+            <input type="hidden" asp-for="Periodo" />
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-file-pdf"></i> Exportar a PDF
+            </button>
+        </form>
+    </div>
+}
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Código de Curso</th>
+            <th>Nombre del Curso</th>
+            <th>Promedio</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Notas != null && Model.Notas.Any())
+        {
+            @foreach (var nota in Model.Notas)
+            {
+                <tr>
+                    <td data-label="" class="text-break">@nota.Codigo_Curso</td>
+                    <td data-label="" class="text-break">@nota.Nombre_Curso</td>
+                    <td data-label="" class="text-break">@nota.Promedio.ToString("F2")</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3" class="text-center">No se encontraron registros.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@{
+    string BuildQuery(int page)
+    {
+        var pares = new List<string>();
+
+        pares.Add("handler=Buscar");
+
+        if (!string.IsNullOrWhiteSpace(Model.TipoIdentificacion))
+            pares.Add($"tipoIdentificacion={Uri.EscapeDataString(Model.TipoIdentificacion)}");
+        if (!string.IsNullOrWhiteSpace(Model.NumeroIdentificacion))
+            pares.Add($"numeroIdentificacion={Uri.EscapeDataString(Model.NumeroIdentificacion)}");
+        if (Model.Año.HasValue)
+            pares.Add($"año={Model.Año.Value}");
+        if (!string.IsNullOrWhiteSpace(Model.Periodo))
+            pares.Add($"periodo={Uri.EscapeDataString(Model.Periodo)}");
+
+        pares.Add($"numeroPagina={page}");
+
+        return "?" + string.Join("&", pares);
+    }
+
+}
+
+@if (Model.TotalPaginas > 1)
+{
+    <div id="paginacion" class="my-3 d-flex justify-content-center">
+        <nav aria-label="Paginación de parámetros">
+            <ul class="pagination pagination-sm mb-0">
+                @if (Model.PaginaActual > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@BuildQuery(Model.PaginaActual - 1)" aria-label="Anterior">
+                            <span>«</span>
+                        </a>
+                    </li>
+                }
+
+                @for (int i = 1; i <= Model.TotalPaginas; i++)
+                {
+                    <li class="page-item @(i == Model.PaginaActual ? "active" : "")">
+                        <a class="page-link" href="@BuildQuery(i)">@i</a>
+                    </li>
+                }
+
+                @if (Model.PaginaActual < Model.TotalPaginas)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@BuildQuery(Model.PaginaActual + 1)" aria-label="Siguiente">
+                            <span>&raquo</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+}
+
+
+<!-- Modal de Resultado -->
+<div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="resultModalLabel">Resultado</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="resultModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

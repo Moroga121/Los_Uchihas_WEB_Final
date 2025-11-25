@@ -1,0 +1,197 @@
+﻿@page
+@model Proyecto_Nuevo_Avatar_V2.Pages.ADM_Bitacora.BitacoraModel
+@{
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/ADM_Usuarios.css" />
+
+<h2 class="text-center mt-4 mb-4">
+    <i class="bi bi-clipboard-data"></i> Bitácora del Sistema
+</h2>
+
+<form method="get" id="filtroForm" class="mb-4">
+
+<div class="row g-3 align-items-center">
+
+    <div class="col-md-2">
+        <label for="FiltroIdentificacion" class="form-label">Fecha de inicio</label>
+        <input type="date" class="form-control" id="FiltroFechaInicio" name="FiltroFechaInicio"
+               value="@Model.FiltroFechaInicio"  />
+    </div>
+    <div class="col-md-2">
+        <label for="FiltroFechaFinal" class="form-label">Fecha final</label>
+        <input type="date" class="form-control" id="FiltroFechaFinal" name="FiltroFechaFinal"
+               value="@Model.FiltroFechaFinal" />
+    </div>
+    <div class="col-md-3">
+        <label for="FiltroUsuario" class="form-label">Usuario</label>
+        <input type="text" class="form-control" id="FiltroUsuario" name="FiltroUsuario"
+               value="@Model.FiltroUsuario" placeholder="Ej: manuel@cuc.ac.cr" />
+    </div>
+    <div class="col-md-3">
+        <label for="FiltroAccion" class="form-label">Accion</label>
+        <input type="text" class="form-control" id="FiltroAccion" name="FiltroAccion"
+               value="@Model.FiltroAccion" placeholder="Ej: Obtener Usuario por ID" />
+    </div>
+    <div class="mt-3 text-end">
+
+        <button type="submit" class="btn btn-success" id="btnBuscar">
+            <i class="bi bi-search"></i> Buscar
+        </button>
+
+            <a asp-page="Bitacora" class="btn btn-secondary">
+            <i class="bi bi-eraser"></i> Limpiar
+        </a>
+
+    </div>
+    </form>
+</div>
+    <table class="table table-bordered table-hover shadow-sm">
+        <thead class="table-dark text-center">
+            <tr>
+                <th>Fecha</th>
+                <th>Usuario</th>
+                <th>Accion</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Bitacoras != null && Model.Bitacoras.Any())
+            {
+                foreach (var b in Model.Bitacoras)
+                {
+                    <tr>
+                        <td class="text-center">@b.Fecha</td>
+                        <td data-label="" class="text-break">@b.Usuario</td>
+                        <td data-label="" class="text-break">@b.Accion</td>
+                        <td>
+                            @if (!string.IsNullOrWhiteSpace(b.Descripcion))
+                            {
+                                try
+                                {
+                                    var json = System.Text.Json.JsonDocument.Parse(b.Descripcion);
+                                    string jsonPretty = System.Text.Json.JsonSerializer.Serialize(
+                                    json,
+                                    new System.Text.Json.JsonSerializerOptions { WriteIndented = true }
+                                    );
+
+                                    // ID único para el modal
+                                    var modalId = "modalDesc_" + Guid.NewGuid().ToString("N");
+
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-primary" type="button"
+                                                data-bs-toggle="modal" data-bs-target="#@modalId">
+                                            <i class="bi bi-eye"></i> Ver Detalle
+                                        </button>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="@($"{modalId}_label")" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-primary text-white">
+                                                        <h5 class="modal-title" id="@($"{modalId}_label")">
+                                                            <i class="bi bi-file-earmark-code"></i> Descripción Detallada
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <pre class="bg-light border rounded p-3 small" style="white-space: pre-wrap; word-wrap: break-word;">
+                                                        @jsonPretty
+                                                    </pre>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                catch
+                                {
+                                    // Si la descripción no es JSON, mostramos un botón también con texto plano
+                                    var modalId = "modalText_" + Guid.NewGuid().ToString("N");
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-secondary" type="button"
+                                                data-bs-toggle="modal" data-bs-target="#@modalId">
+                                            <i class="bi bi-eye"></i> Ver Texto
+                                        </button>
+
+                                        <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="@($"{modalId}_label")" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-secondary text-white">
+                                                        <h5 class="modal-title" id="@($"{modalId}_label")">
+                                                            <i class="bi bi-file-text"></i> Descripción
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p class="text-break">@b.Descripcion</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <em class="text-muted">Sin descripción</em>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center text-muted">
+                        <i class="bi bi-inbox"></i> No hay registros de bitácora disponibles.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+@if (Model.TotalPaginas > 1)
+{
+    <div id="paginacion" class="my-3 d-flex justify-content-center">
+        <nav aria-label="Paginación de parámetros" style="overflow-x: auto; white-space: nowrap;">
+            <ul class="pagination pagination-sm mb-0 flex-nowrap">
+                @if (Model.PaginaActual > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="?numeroPagina=@(Model.PaginaActual - 1)" aria-label="Anterior">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                }
+
+                @for (int i = 1; i <= Model.TotalPaginas; i++)
+                {
+                    <li class="page-item @(i == Model.PaginaActual ? "active" : "")">
+                        <a class="page-link" href="?numeroPagina=@i">@i</a>
+                    </li>
+                }
+
+                @if (Model.PaginaActual < Model.TotalPaginas)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="?numeroPagina=@(Model.PaginaActual + 1)" aria-label="Siguiente">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+
+}
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

@@ -1,0 +1,298 @@
+﻿@page
+@model Proyecto_Nuevo_Avatar_V2.Pages.IPN2.IndexModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Administrar Pagos";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/ADM_Usuarios.css" />
+
+<h2 class="text-center">Administrar Pagos de Facturas</h2>
+
+<p>
+    <a asp-page="/IPN2/Create" class="btn btn-primary">
+        <i class="fas fa-plus-circle"></i> Registrar Pago
+    </a>
+</p>
+
+<form id="formFiltrosJS" class="mb-4">
+    <div class="row g-3 align-items-center">
+        <div class="col-md-2">
+            <label for="filtroPeriodo" class="form-label">Periodo</label>
+            <select id="filtroPeriodo" class="form-select">
+                <option value="">Seleccione...</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="mt-3 text-end">
+        <button type="button" id="btnAplicarFiltrosJS" class="btn btn-success">
+            <i class="bi bi-search"></i> Buscar
+        </button>
+
+        <a asp-page="Index" class="btn btn-secondary">
+            <i class="bi bi-eraser"></i> Limpiar
+        </a>
+    </div>
+</form>
+
+<table class="table table-bordered table-striped" id="tablaPagos">
+    <thead class="table-dark">
+        <tr>
+            <th>Número Pago</th>
+            <th>Periodo</th>
+            <th>Número Factura</th>
+            <th>Estado</th>
+            <th>Comprobante</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Pago != null && Model.Pago.Any())
+        {
+            @foreach (var pago in Model.Pago)
+            {
+                <tr data-id="@pago.Numero_Pago">
+                    <td data-label="" class="text-break">@pago.Numero_Pago</td>
+                    <td data-label="" class="text-break">@pago.Periodo</td>
+                    <td data-label="" class="text-break">@pago.Numero_Factura</td>
+                    <td data-label="" class="text-break">@pago.Estado_Pago</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(pago.Ruta_Comprobante))
+                        {
+                            <a href="@pago.Ruta_Comprobante" target="_blank" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-file-pdf"></i> Ver PDF
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">-</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-page="DetallePago"
+                           asp-route-id="@pago.Numero_Pago"
+                           class="btn btn-info btn-sm">
+                            <i class="fas fa-eye"></i> Ver Detalle
+                        </a>
+                        <button type="button"
+                                class="btn btn-danger btn-sm"
+                                onclick="mostrarModalReversar(@pago.Numero_Pago)">
+                            <i class="fas fa-undo"></i> Reversar
+                        </button>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6" class="text-center">No hay pagos registrados.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    string BuildQuery(int page)
+    {
+        var pares = new List<string>();
+        if (!string.IsNullOrWhiteSpace(Model.filtroPeriodo))
+            pares.Add($"filtroPeriodo={Uri.EscapeDataString(Model.filtroPeriodo)}");
+        pares.Add($"numeroPagina={page}");
+        return "?" + string.Join("&", pares);
+    }
+}
+
+@if (Model.TotalPaginas > 1)
+{
+    <div id="paginacion" class="my-3 d-flex justify-content-center">
+        <nav aria-label="Paginación de facturas">
+            <ul class="pagination pagination-sm mb-0">
+                @if (Model.PaginaActual > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@BuildQuery(Model.PaginaActual - 1)" aria-label="Anterior">
+                            <span aria-hidden="true">«</span>
+                        </a>
+                    </li>
+                }
+
+                @for (int i = 1; i <= Model.TotalPaginas; i++)
+                {
+                    <li class="page-item @(i == Model.PaginaActual ? "active" : "")">
+                        <a class="page-link" href="@BuildQuery(i)">@i</a>
+                    </li>
+                }
+
+                @if (Model.PaginaActual < Model.TotalPaginas)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@BuildQuery(Model.PaginaActual + 1)" aria-label="Siguiente">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+}
+
+<!-- Modal Reversar Pago -->
+<div class="modal fade" id="modalReversar" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="ReversarPago">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle"></i> Confirmación de Reversión
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="numeroPagoReversar" name="NumeroPago" />
+                    <div class="mb-3">
+                        <label for="motivoReversa" class="form-label">Motivo de la reversión</label>
+                        <textarea id="motivoReversa"
+                                  name="Motivo"
+                                  class="form-control"
+                                  rows="3"
+                                  placeholder="Explique el motivo..."
+                                  required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success" id="btnConfirmarReversar" disabled>
+                        Confirmar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Resultado -->
+<div class="modal fade" id="resultModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" id="resultModalHeader">
+                <h5 class="modal-title" id="resultModalLabel">Resultado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="resultModalBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        llenarFiltros();
+        restaurarFiltros();
+
+        // Botón Buscar ahora redirige con filtro y pagina=1
+        document.getElementById('btnAplicarFiltrosJS').addEventListener('click', function() {
+            const filtroPeriodo = document.getElementById('filtroPeriodo').value;
+            // Redirigir la página enviando filtroPeriodo y numeroPagina=1 en query string
+            window.location.href = `?filtroPeriodo=${encodeURIComponent(filtroPeriodo)}&numeroPagina=1`;
+        });
+
+        // Botón Limpiar limpia filtro guardado y recarga sin filtro
+        const btnLimpiar = document.querySelector('a.btn-secondary');
+        if (btnLimpiar) {
+            btnLimpiar.addEventListener('click', function() {
+                sessionStorage.removeItem('filtroPeriodo');
+                window.location.href = '?numeroPagina=1'; // recarga sin filtro
+            });
+        }
+
+        function llenarFiltros() {
+            const filas = document.querySelectorAll('#tablaPagos tbody tr[data-id]');
+            const periodos = new Set();
+
+            filas.forEach(fila => {
+                const periodo = fila.cells[1].textContent.trim();
+                if (periodo) periodos.add(periodo);
+            });
+
+            const selectPeriodo = document.getElementById('filtroPeriodo');
+
+            // Limpiar opciones existentes excepto la primera
+            while (selectPeriodo.options.length > 1) {
+                selectPeriodo.remove(1);
+            }
+
+            Array.from(periodos).sort().forEach(p => {
+                const option = document.createElement('option');
+                option.value = p;
+                option.textContent = p;
+                selectPeriodo.appendChild(option);
+            });
+        }
+
+        function restaurarFiltros() {
+            const filtroGuardado = sessionStorage.getItem('filtroPeriodo');
+            if (filtroGuardado) {
+                document.getElementById('filtroPeriodo').value = filtroGuardado;
+            }
+        }
+    });
+
+        function mostrarModalReversar(numeroPago) {
+        const motivo = document.getElementById('motivoReversa');
+        const btnConfirmar = document.getElementById('btnConfirmarReversar');
+
+        document.getElementById('numeroPagoReversar').value = numeroPago;
+        motivo.value = '';
+
+        btnConfirmar.disabled = true;
+
+        motivo.addEventListener('input', function () {
+            btnConfirmar.disabled = motivo.value.trim().length === 0;
+        });
+
+        var modal = new bootstrap.Modal(document.getElementById('modalReversar'));
+        modal.show();
+    }
+</script>
+
+
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @if (!string.IsNullOrEmpty(Model.ModalMessage))
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var modalTitle = '@Html.Raw(Model.ModalTitle)';
+                var modalMessage = '@Html.Raw(Model.ModalMessage)';
+                var modalType = '@Model.ModalType';
+
+                document.getElementById('resultModalLabel').textContent = modalTitle;
+                document.getElementById('resultModalBody').innerHTML = modalMessage;
+
+                var modalHeader = document.getElementById('resultModalHeader');
+                if (modalType === 'success') {
+                    modalHeader.classList.remove('bg-danger', 'bg-info', 'text-white');
+                    modalHeader.classList.add('bg-success', 'text-white');
+                } else if (modalType === 'info') {
+                    modalHeader.classList.remove('bg-danger', 'bg-success', 'text-white');
+                    modalHeader.classList.add('bg-info', 'text-white');
+                } else {
+                    modalHeader.classList.remove('bg-success', 'bg-info', 'text-white');
+                    modalHeader.classList.add('bg-danger', 'text-white');
+                }
+
+                var modal = new bootstrap.Modal(document.getElementById('resultModal'));
+                modal.show();
+            });
+        </script>
+    }
+}

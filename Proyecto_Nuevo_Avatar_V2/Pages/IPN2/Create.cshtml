@@ -1,0 +1,147 @@
+﻿@page
+@model Proyecto_Nuevo_Avatar_V2.Pages.IPN2.CreateModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Registrar Pago";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/ADM_Usuarios.css" />
+
+<h2 class="text-center">
+    <i class="fas fa-plus-circle"></i> Registrar Pago de Factura
+</h2>
+
+<!-- Card para buscar factura -->
+<div class="card shadow p-4 mb-4">
+    <h5 class="mb-3"><i class="fas fa-search"></i> Buscar Factura</h5>
+    <form method="post" asp-page-handler="BuscarFactura">
+        <div class="form-group mb-3">
+            <label for="numeroFactura" class="form-label">Número de Factura</label>
+            <input type="number"
+                   class="form-control"
+                   id="numeroFactura"
+                   name="NumeroFactura"
+                   placeholder="Ingrese número de factura">
+
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i> Buscar
+            </button>
+
+            <a asp-page="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left-circle"></i> Volver
+            </a>
+        </div>
+    </form>
+</div>
+
+@if (Model.MontoTotal.HasValue)
+{
+    <div class="card shadow p-4">
+        <h5 class="mb-3"><i class="fas fa-file-invoice-dollar"></i> Información de la Factura</h5>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <p><strong>Número de Factura:</strong> #@Model.NumeroFacturaBuscado</p>
+            </div>
+            <div class="col-md-6">
+                <p class="fs-5">
+                    <strong>Total a Pagar:</strong>
+                    <span class="text-success fw-bold">₡@Model.MontoTotal.Value.ToString("N2")</span>
+                </p>
+            </div>
+        </div>
+
+        <hr />
+
+        <form method="post" asp-page-handler="RegistrarPago">
+            <input type="hidden" name="NumeroFactura" value="@Model.NumeroFacturaBuscado" />
+
+            <div class="form-group mb-3">
+                <label for="montoPago" class="form-label">Monto del Pago</label>
+                <input type="number"
+                       class="form-control"
+                       id="montoPago"
+                       name="MontoPago"
+                       placeholder="Ingrese el monto">
+
+                <small class="text-muted">
+                    <i class="fas fa-info-circle"></i>
+                    El monto debe ser igual o mayor a ₡@Model.MontoTotal.Value.ToString("N2")
+                </small>
+            </div>
+
+            <div class="form-group mb-3">
+                <div class="form-check">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           id="generarComprobante"
+                           name="GenerarComprobante"
+                           value="true">
+                    <label class="form-check-label" for="generarComprobante">
+                        <i class="fas fa-file-pdf"></i> Generar comprobante de pago en PDF
+                    </label>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-save"></i> Registrar Pago
+                </button>
+                <a asp-page="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left-circle"></i> Volver
+                </a>
+            </div>
+        </form>
+    </div>
+}
+
+<!-- Modal de Resultado -->
+<div class="modal fade" id="resultModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white" id="resultModalHeader">
+                <h5 class="modal-title" id="resultModalLabel">Resultado</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="resultModalBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @if (!string.IsNullOrEmpty(Model.ModalMessage))
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var modalTitle = '@Html.Raw(Model.ModalTitle)';
+                var modalMessage = `@Html.Raw(Model.ModalMessage)`;
+                var modalType = '@Model.ModalType';
+
+                document.getElementById('resultModalLabel').textContent = modalTitle;
+                document.getElementById('resultModalBody').innerHTML = modalMessage;
+
+                var modalHeader = document.getElementById('resultModalHeader');
+                modalHeader.classList.remove('bg-danger', 'bg-success', 'bg-info', 'text-white');
+
+                if (modalType === 'success') {
+                    modalHeader.classList.add('bg-success', 'text-white');
+                } else if (modalType === 'info') {
+                    modalHeader.classList.add('bg-info', 'text-white');
+                } else {
+                    modalHeader.classList.add('bg-danger', 'text-white');
+                }
+
+                var modal = new bootstrap.Modal(document.getElementById('resultModal'));
+                modal.show();
+            });
+        </script>
+    }
+}

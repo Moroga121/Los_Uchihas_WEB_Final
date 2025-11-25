@@ -1,0 +1,126 @@
+﻿@page
+@model Proyecto_Nuevo_Avatar_V2.Pages.Login.LoginModel
+@{
+
+    Layout = null;
+
+}
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+
+    
+    <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700&display=swap" rel="stylesheet">
+
+    
+    <link href="~/css/Login.css" rel="stylesheet" />
+
+<body>
+    <main class="login-container">
+
+        <!-- Sección izquierda -->
+
+        <section class="login-left">
+            <div class="login-left-top">
+                <h2>Sistema Académico</h2>
+                <p>Gestión profesional de Contenidos y Recursos Académicos</p>
+            </div>
+            <div class="login-left-bottom">
+                <img src="~/imagenes/Logo.png" alt="Logo del Sistema Académico" class="logo" />
+            </div>
+        </section>
+
+        <!-- Sección derecha -->
+
+        <section class="login-right">
+            <div class="login-form-container">
+                <h1>¡Bienvenido!</h1>
+
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="error-message"> <i class="fas fa-exclamation-circle"></i> @Model.ErrorMessage </div>
+                }
+
+                
+
+                <form method="post" class="login-form">
+                    <div class="input-group">
+                        <label class="sr-only">Correo electrónico</label>
+                        <input type="text" id="email" name="Login.Email" placeholder="Correo electrónico" autocomplete="email" />
+                        <i class="fas fa-envelope icon"></i>
+                        
+                    </div>
+
+                    @if (ViewData.ModelState.TryGetValue("Login.Email", out var emailState) && emailState.Errors.Count > 0)
+                    {
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-circle"></i>
+                            @foreach (var error in emailState.Errors)
+                            {
+                                <div>@error.ErrorMessage</div>
+                            }
+                        </div>
+                    }
+
+
+                    <div class="input-group">
+                        <label class="sr-only">Contraseña</label>
+                        <input type="password" id="contrasena" name="Login.Contrasena" placeholder="Contraseña" autocomplete="current-password" />
+                        <i class="fas fa-lock icon"></i>
+                        
+                    </div>
+
+                    @if (ViewData.ModelState.TryGetValue("Login.Contrasena", out var passState) && passState.Errors.Count > 0)
+                    {
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-circle"></i>
+                            @foreach (var error in passState.Errors)
+                            {
+                                <div>@error.ErrorMessage</div>
+                            }
+                        </div>
+                    }
+
+                    <div class="input-remember">
+                        <input type="checkbox" id="recordarme" name="Recordarme" />
+                        <label for="recordarme">Recordarme</label>
+                    </div>
+
+                    <button type="submit" class="btn-login">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    </button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Sesión Expirada -->
+
+    <div class="modal" id="sessionExpiredModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5><i class="fas fa-clock"></i> Sesión Expirada</h5>
+            </div>
+            <div class="modal-body">
+                Tu sesión ha expirado. Por favor, inicia sesión nuevamente.
+            </div>
+            <div class="modal-footer">
+                <button id="redirectLoginBtn"><i class="fas fa-sign-in-alt"></i> Ir al Login</button>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+</body>
+
+
+
+

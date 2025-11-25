@@ -1,0 +1,115 @@
+﻿@page "/ADM10_Cursos/Edit/{id}"
+@model Proyecto_Nuevo_Avatar_V2.Pages.ADM10_Cursos.EditModel
+
+@{
+    ViewData["Title"] = "Editar Curso";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/ADM_Usuarios.css" />
+
+<h2 class="text-center">
+    <i class="bi bi-pencil-square"></i> Editar Curso
+</h2>
+
+<div class="card shadow p-4">
+    <form method="post">
+        <div class="form-group mb-3">
+            <label class="form-label">ID Curso</label>
+            <input asp-for="CursoEditado.ID_Curso" class="form-control" readonly />
+        </div>
+
+        <div class="form-group mb-3">
+            <label class="form-label">Carrera</label>
+            <select asp-for="CursoEditado.ID_Carrera" class="form-control">
+                <option value="">Seleccione una carrera</option>
+                @if (Model.Carreras != null)
+                {
+                    foreach (var carrera in Model.Carreras)
+                    {
+                        <option value="@carrera.ID_Carrera" selected="@(carrera.ID_Carrera == Model.CursoEditado.ID_Carrera)">
+                            @carrera.Nombre
+                        </option>
+                    }
+                }
+            </select>
+            <span asp-validation-for="CursoEditado.ID_Carrera" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label class="form-label">Nivel</label>
+            <input asp-for="CursoEditado.Nivel" class="form-control" type="number" placeholder="Ejemplo: 5" />
+            <span asp-validation-for="CursoEditado.Nivel" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label class="form-label">Nombre</label>
+            <input asp-for="CursoEditado.Nombre" class="form-control" />
+            <span asp-validation-for="CursoEditado.Nombre" class="text-danger"></span>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-warning">
+                <i class="bi bi-save"></i> Actualizar
+            </button>
+            <a asp-page="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left-circle"></i> Volver
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Modal resultado -->
+<div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" id="resultModalHeader">
+                <h5 class="modal-title" id="resultModalLabel">Resultado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="resultModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mensaje = "@Html.Raw(TempData["Resultado"])";
+            const tipo = "@TempData["TipoMensaje"]";
+            const redireccion = "@TempData["Redireccion"]";
+
+            if (mensaje && mensaje.trim() !== "") {
+                const modal = new bootstrap.Modal(document.getElementById("resultModal"));
+                const body = document.getElementById("resultModalBody");
+                const title = document.getElementById("resultModalLabel");
+
+                    title.textContent = (tipo === "exito") ? "Éxito" : "Error";
+
+                    if (tipo === "exito") {
+                        resultModalHeader.className = "modal-header bg-success text-white";
+                    } else {
+                        resultModalHeader.className = "modal-header bg-danger text-white";
+                    }
+
+                title.textContent = tipo === "exito" ? "Éxito" : "Error";
+                body.textContent = mensaje;
+                modal.show();
+
+                document.getElementById("resultModal").addEventListener("hidden.bs.modal", function () {
+                    if (tipo === "exito" && redireccion) {
+                        window.location.href = `/ADM10_Cursos/${redireccion}`;
+                    }
+                });
+            }
+        });
+    </script>
+}
+

@@ -1,0 +1,107 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Proyecto_Nuevo_Avatar_V2.Entities;
+using Proyecto_Nuevo_Avatar_V2.Services;
+using System.Text.RegularExpressions;
+
+namespace Proyecto_Nuevo_Avatar_V2.Pages.ADM8_Instituciones
+{
+    public class EditModel : PageModel
+    {
+        private readonly IInstitucionApiClient _institucionApiClient;
+        private readonly ILoginApiClient _loginApiClient;
+
+        public EditModel(IInstitucionApiClient institucionApiClient, ILoginApiClient loginApiClient)
+        {
+            _institucionApiClient = institucionApiClient;
+            _loginApiClient = loginApiClient;
+        }
+
+        [BindProperty]
+        public Institucion InstitucionEditada { get; set; } = new();
+
+        #region "Validar Token"
+
+        private async Task<string?> GetValidAccessTokenAsync()
+        {
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var refreshToken = HttpContext.Session.GetString("RefreshToken");
+
+            if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
+                return null;
+
+            bool valido = await _loginApiClient.ValidateTokenAsync(accessToken);
+            if (!valido)
+            {
+                var nuevoToken = await _loginApiClient.RefreshTokenAsync(refreshToken);
+                if (nuevoToken != null)
+                {
+                    HttpContext.Session.SetString("AccessToken", nuevoToken.Access_Token);
+                    HttpContext.Session.SetString("RefreshToken", nuevoToken.Refresh_Token);
+                    HttpContext.Session.SetString("Expiresin", nuevoToken.Expires_In.ToString());
+                    accessToken = nuevoToken.Access_Token;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            return accessToken;
+        }
+
+        #endregion
+
+        public async Task<IActionResult> OnGetAsync(string id)
+        {
+            ViewData["Nombre"] = HttpContext.Session.GetString("Nombre");
+            ViewData["Rol"] = HttpContext.Session.GetString("Rol");
+            ViewData["Email"] = HttpContext.Session.GetString("Email");
+
+            var token = await GetValidAccessTokenAsync();
+            if (token == null)
+            {
+
+                HttpContext.Session.Clear();
+                return RedirectToPage("/Login/Login");
+            }
+
+            var institucion = await _institucionApiClient.ObtenerInstitucionPorIdAsync(id, token);
+            if (institucion == null)
+                return RedirectToPage("Index");
+
+            InstitucionEditada = institucion;
+            return Page();
+        }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            ViewData["Nombre"] = HttpContext.Session.GetString("Nombre");
+            ViewData["Rol"] = HttpContext.Session.GetString("Rol");
+            ViewData["Email"] = HttpContext.Session.GetString("Email");
+
+            if (!Regex.IsMatch(InstitucionEditada.Nombre ?? "", @"^[A-Za-z¡…Õ”⁄·ÈÌÛ˙—Ò ]+$"))
+            {
+                ModelState.AddModelError("InstitucionEditada.Nombre", "El nombre solo puede contener letras y espacios.");
+                return Page();
+            }
+
+            var token = await GetValidAccessTokenAsync();
+            if (token == null)
+            {
+
+                HttpContext.Session.Clear();
+                return RedirectToPage("/Login/Login");
+            }
+
+            var (Exito, Mensaje, _) = await _institucionApiClient.CRUDInstitucionAsync(InstitucionEditada, "Update", token);
+
+            TempData["Resultado"] = Exito ? "InstituciÛn actualizada correctamente." : Mensaje;
+            TempData["TipoMensaje"] = Exito ? "exito" : "error";
+            TempData["Redireccion"] = "Index";
+
+            return Page();
+        }
+    }
+}
+

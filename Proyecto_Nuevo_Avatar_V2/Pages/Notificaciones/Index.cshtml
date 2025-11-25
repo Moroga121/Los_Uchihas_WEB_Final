@@ -1,0 +1,45 @@
+﻿@page
+@model Proyecto_Nuevo_Avatar_V2.Pages.Notificaciones.IndexModel
+@{
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/Notificaciones.css" />
+
+<h2 class="text-center">
+    <i class="bi bi-envelope text-primary"></i> Mis Notificaciones
+</h2>
+
+<div class="text-right mb-3">
+    <a asp-page="/Index/Principal" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle"></i> Volver
+    </a>
+</div>
+
+<div class="notificaciones-container">
+    @if (Model.Notificaciones != null && Model.Notificaciones.Any())
+    {
+        foreach (var n in Model.Notificaciones)
+        {
+            var estadoClass = n.Estado.ToLower() switch
+            {
+                "exitoso" => "notificacion-success",
+                "fallido" => "notificacion-failed",
+                _ => "notificacion-info"
+            };
+
+            <div class="notificacion-card @estadoClass">
+                <div><strong>@n.Asunto</strong></div>
+                <div class="notificacion-fecha">@n.FechaEnvio.ToString("yyyy-MM-dd HH:mm")</div>
+                <div>Estado: @n.Estado</div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="text-center text-muted">No hay notificaciones para este usuario.</div>
+    }
+</div>
+
+
+

@@ -1,0 +1,87 @@
+﻿@page
+@model Proyecto_Nuevo_Avatar_V2.Pages.IPN2.DetallePagoModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Detalle de Pago";
+}
+
+<h2 class="text-center">Detalle de Pago</h2>
+
+<div class="card shadow p-4">
+    @if (Model.Pago != null)
+    {
+        <form>
+            <div class="form-group mb-3">
+                <label for="Numero_Pago" class="form-label">Número de Pago</label>
+                <input asp-for="Pago.Numero_Pago" class="form-control" readonly />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="Numero_Factura" class="form-label">Número de Factura</label>
+                <input asp-for="Pago.Numero_Factura" class="form-control" readonly />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="Periodo" class="form-label">Periodo</label>
+                <input asp-for="Pago.Periodo" class="form-control" readonly />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="Estado_Pago" class="form-label">Estado del Pago</label>
+                <input asp-for="Pago.Estado_Pago" class="form-control" readonly />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="Fecha_Pago" class="form-label">Fecha de Pago</label>
+                <input type="text" value="@Model.Pago.Fecha_Pago?.ToString("dd/MM/yyyy HH:mm")" class="form-control" readonly />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="Comprobante" class="form-label">Comprobante de Pago</label>
+                <div>
+                    @if (!string.IsNullOrEmpty(Model.Pago.Ruta_Comprobante))
+                    {
+                        <a href="@Model.Pago.Ruta_Comprobante" target="_blank" class="btn btn-outline-danger">
+                            <i class="fas fa-file-pdf"></i> Ver Comprobante PDF
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No se generó comprobante</span>
+                    }
+                </div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="Motivo_Reversa" class="form-label">Motivo de Reversión</label>
+                <textarea class="form-control" rows="3" readonly>@(string.IsNullOrEmpty(Model.Pago.Motivo_Reversa) ? "N/A" : Model.Pago.Motivo_Reversa)</textarea>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="Fecha_Reversa" class="form-label">Fecha de Reversión</label>
+                <input type="text" value="@(Model.Pago.Fecha_Reversa?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")" class="form-control" readonly />
+            </div>
+
+            <div class="text-center">
+                <a type="button" class="btn btn-secondary" asp-page="/IPN2/Index">
+                    Volver
+                </a>
+            </div>
+        </form>
+    }
+    else
+    {
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle"></i> No se encontró el pago solicitado.
+        </div>
+        <div class="text-center">
+            <a type="button" class="btn btn-secondary" asp-page="/IPN2/Index">
+                Volver
+            </a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+}

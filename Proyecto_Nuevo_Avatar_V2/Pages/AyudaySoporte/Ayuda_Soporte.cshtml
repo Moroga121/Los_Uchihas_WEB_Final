@@ -1,0 +1,109 @@
+﻿@page
+@model Proyecto_Nuevo_Avatar_V2.Pages.AyudaySoporte.Ayuda_SoporteModel
+@{
+}
+
+<link rel="stylesheet" href="~/css/Principal.css" />
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-5 font-weight-bold text-primary">
+            <i class="fas fa-life-ring mr-2"></i> Centro de Ayuda y Soporte
+        </h1>
+        <p class="lead text-muted">
+            Encuentra aquí información útil, preguntas frecuentes y cómo contactar con el soporte técnico.
+        </p>
+    </div>
+
+    <!-- Preguntas Frecuentes -->
+    <div class="card shadow mb-4 border-left-primary">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-question-circle mr-2"></i> Preguntas Frecuentes (FAQ)</h5>
+        </div>
+        <div class="card-body">
+            <div class="accordion" id="faqAccordion">
+                <div class="card">
+                    <div class="card-header" id="faq1">
+                        <h6 class="mb-0">
+                            <button class="btn btn-link text-primary" type="button" data-toggle="collapse" data-target="#faq1Content">
+                                ¿Cómo cambio mi contraseña?
+                            </button>
+                        </h6>
+                    </div>
+                    <div id="faq1Content" class="collapse" data-parent="#faqAccordion">
+                        <div class="card-body">
+                            Puedes cambiar tu contraseña desde el menú superior, en la opción <strong>Perfil → Cambiar Contraseña</strong>.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="faq2">
+                        <h6 class="mb-0">
+                            <button class="btn btn-link text-primary" type="button" data-toggle="collapse" data-target="#faq2Content">
+                                No puedo acceder a un módulo, ¿qué hago?
+                            </button>
+                        </h6>
+                    </div>
+                    <div id="faq2Content" class="collapse" data-parent="#faqAccordion">
+                        <div class="card-body">
+                            Asegúrate de tener los permisos necesarios para ese módulo. Si el problema continúa, contacta a soporte técnico.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="faq3">
+                        <h6 class="mb-0">
+                            <button class="btn btn-link text-primary" type="button" data-toggle="collapse" data-target="#faq3Content">
+                                ¿Dónde puedo ver mis notificaciones?
+                            </button>
+                        </h6>
+                    </div>
+                    <div id="faq3Content" class="collapse" data-parent="#faqAccordion">
+                        <div class="card-body">
+                            En el menú superior, haz clic en el ícono de <i class="fas fa-bell"></i> para revisar tus notificaciones recientes.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contacto y Soporte -->
+    <div class="card shadow mb-4 border-left-success">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="fas fa-headset mr-2"></i> Contactar Soporte</h5>
+        </div>
+        <div class="card-body">
+            <p>Si necesitas asistencia personalizada, puedes comunicarte con nuestro equipo de soporte:</p>
+            <ul class="list-unstyled mb-4">
+                <li><i class="fas fa-envelope text-success mr-2"></i> <strong>Correo:</strong> soporte@proyectoavatar.com</li>
+                <li><i class="fas fa-phone text-success mr-2"></i> <strong>Teléfono:</strong> +506 2222-3333</li>
+                <li><i class="fas fa-clock text-success mr-2"></i> <strong>Horario:</strong> Lunes a Viernes, de 8:00 a.m. a 5:00 p.m.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Formulario de Reporte -->
+    <div class="card shadow border-left-info">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0"><i class="fas fa-paper-plane mr-2"></i> Enviar un Reporte o Sugerencia</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" asp-page-handler="EnviarSoporte">
+                <div class="form-group">
+                    <label for="asunto">Asunto</label>
+                    <input type="text" class="form-control" id="asunto" name="asunto" required placeholder="Ejemplo: Error al guardar un registro">
+                </div>
+                <div class="form-group">
+                    <label for="mensaje">Descripción del problema o sugerencia</label>
+                    <textarea class="form-control" id="mensaje" name="mensaje" rows="4" required placeholder="Describe brevemente lo sucedido..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-info">
+                    <i class="fas fa-paper-plane mr-1"></i> Enviar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

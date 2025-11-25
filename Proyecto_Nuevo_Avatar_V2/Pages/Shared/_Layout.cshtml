@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <!-- SB Admin 2 CSS (Bootstrap) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.4/css/sb-admin-2.min.css" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link href="~/css/layout.css" rel="stylesheet" />
+    
+</head>
+
+<body id="page-top">
+
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <!-- Marca -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" asp-page="/Index/Principal">
+                <img src="~/imagenes/Logo.png" alt="Logo" class="sidebar-logo" />
+            </a>
+
+            <!-- Separador -->
+            <li class="nav-item" role="separator">
+                <hr class="sidebar-divider my-0" />
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" asp-page="/Index/Principal">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Inicio</span>
+                </a>
+            </li>
+
+            <li class="nav-item" role="separator">
+                <hr class="sidebar-divider" />
+            </li>
+
+            <!-- Encabezado -->
+            <li class="nav-item sidebar-heading">
+                <span>Mantenimientos</span>
+            </li>
+
+            <!-- Menú Desplegable Catálogos -->
+
+            <nav class="sidebar">
+
+                @await Component.InvokeAsync("MenuLateral")
+
+            </nav>
+
+            <li class="nav-item" role="separator">
+                <hr class="sidebar-divider d-none d-md-block" />
+            </li>
+            
+
+        </ul>
+        
+
+        <!-- Contenedor principal -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" id="userDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-800 small">
+                                    @ViewData["Nombre"] (@ViewData["Rol"])
+                                </span>
+                                <img class="img-profile rounded-circle" src="~/imagenes/Perfil.png" alt="Foto de perfil">
+                            </a>
+
+                            <!-- Menú desplegable -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+
+                                <!-- Modal Perfil -->
+                                <a class="dropdown-item" asp-page="/ADM_Usuarios/CambiarContrasena">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Perfil
+                                </a>
+
+                                <div class="dropdown-divider"></div>
+
+                                <!-- Modal Perfil -->
+                                <a class="dropdown-item" asp-page="/Notificaciones/Index">
+                                    <i class="fas fa-bell fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Notificaciones
+                                </a>
+
+                                <div class="dropdown-divider"></div>
+
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Cerrar Sesión
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+
+
+                @if (!Context.Request.Path.StartsWithSegments("/Login"))
+                {
+                    <nav aria-label="breadcrumb" class="ml-4 mt-2">
+                        <ol id="breadcrumbs" class="breadcrumb">
+                            <!-- El script llenará esto automáticamente -->
+                        </ol>
+                    </nav>
+                }
+
+
+                <div class="container-fluid">
+                    <main role="main" class="pb-3">
+                        @RenderBody()
+                    </main>
+                </div>
+
+            </div>
+
+
+            <footer class="sticky-footer bg-dark-footer">
+                <div class="container my-auto">
+                    <div class="text-center my-auto">
+                        <span>copy; 2025 Proyecto Nuevo Avatar. Todos los derechos reservados.</span>
+                    </div>
+                </div>
+            </footer>
+
+
+        </div>
+
+
+
+    </div>
+
+    <!-- Modal Cerrar Sesión -->
+
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-left-primary shadow">
+                <div class="modal-header">
+                    <h5 class="modal-title font-weight-bold" id="logoutModalLabel">
+                        <i class="fas fa-sign-out-alt mr-2 text-primary"></i> ¿Listo para salir?
+                    </h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Seleccione "Cerrar Sesión" a continuación si está listo para finalizar su sesión actual.
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+                    <form method="post" asp-page="/Index/Principal" asp-page-handler="Logout">
+                        <button type="submit" class="btn btn-primary">Cerrar Sesión</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.4/js/sb-admin-2.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- #region Script Funcionamiento Breadcrumbs -->
+
+
+    <script>
+
+                        document.addEventListener("DOMContentLoaded", function () {
+            const breadcrumbContainer = document.getElementById("breadcrumbs");
+            if (!breadcrumbContainer) return;
+
+            // Obtener ruta actual (sin query string)
+            const path = window.location.pathname.replace(/^\/|\/$/g, "");
+            if (!path) return; // Página raíz
+
+            // Dividir la ruta en segmentos
+            const segments = path.split("/").filter(Boolean);
+
+            // Palabras o segmentos a ignorar (IDs, códigos, números, paginación, etc.)
+            const ignored = [
+                "id", "codigo", "anio", "mes", "page", "index"
+            ];
+
+            // Diccionario de nombres amigables
+            const friendlyNames = {
+                "adm_usuarios": "Administrar Usuarios",
+                "cambiarcontrasena": "Cambiar Contraseña",
+                "notificaciones": "Notificaciones",
+                "adm_roles": "Administrar Roles",
+                "adm_parametros": "Administrar Parámetros",
+                "adm_modulos": "Administrar Módulos",
+                "adm_instituciones": "Administrar Instituciones",
+                "adm_carreras": "Administrar Carreras",
+                "adm_cursos": "Administrar Cursos",
+                "adm_profesores": "Administrar Profesores",
+                "adm_periodos": "Administrar Períodos",
+                "adm_grupos": "Administrar Grupos",
+                "adm_prematricula": "Gestionar Prematrícula",
+                "adm_matricula": "Gestionar Matrícula",
+                "adm_expedientes": "Administrar Expedientes",
+                "adm_promedios": "Consultar Promedios",
+                "adm_periodos_listar": "Listar Periodos",
+                "adm_facturas": "Administrar Facturas",
+                "adm_pagos": "Registro y Consulta de Pagos",
+                "adm_notificaciones": "Notificaciones y Correo",
+                "adm_bitacora": "Consulta Bitácora",
+                "ayudaysoporte": "Ayuda y Soporte",
+                "aca1": "Consultar Promedios",
+                "aca2": "Listado de Estudiantes por Periodo",
+                "ipn1": "Administrar Facturas",
+                "ipn2": "Administrar Pagos",
+                "ipn3": "Administrar Notificaciones",
+                "adm8_instituciones": "Instituciones",
+                "adm9_carreras": "Carreras",
+                "adm10_cursos": "Cursos",
+                "adm11_profesores": "Profesores",
+                "adm12_periodos": "Periodos",
+                "adm13_grupos" : "Grupos", 
+                "prof_grupos": "Administrar Grupos",
+                "prof_rubros": "Cargar Desglose de Rubros",
+                "prof_promedios": "Consultar Promedios",
+
+                "create": "Crear",
+                "edit": "Editar",
+                "details": "Detalles",
+                "delete": "Eliminar"
+            };
+
+            // Crear primer ítem "Inicio"
+            const home = document.createElement("li");
+            home.classList.add("breadcrumb-item");
+            home.innerHTML = `<a href="/Index/Principal"><i class="fas fa-home"></i> Inicio</a>`;
+            breadcrumbContainer.appendChild(home);
+
+            let accumulatedPath = "";
+            const cleanSegments = [];
+
+            // Filtrar segmentos innecesarios o que sean IDs (todo lo que no esté en friendlyNames)
+            segments.forEach(segment => {
+                const lower = segment.toLowerCase();
+                if (ignored.includes(lower)) return; // palabras irrelevantes
+                if (!friendlyNames[lower]) return;   // descarta cualquier ID o valor no amigable
+                cleanSegments.push(segment);
+            });
+
+            // Crear los elementos del breadcrumb
+            cleanSegments.forEach((segment, i) => {
+                accumulatedPath += `/${segment}`;
+                const li = document.createElement("li");
+                li.classList.add("breadcrumb-item");
+
+                const key = segment.toLowerCase();
+                const friendly = friendlyNames[key] || segment.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+                if (i === cleanSegments.length - 1) {
+                    li.textContent = friendly;
+                    li.classList.add("active");
+                    li.setAttribute("aria-current", "page");
+                } else {
+                    li.innerHTML = `<a href="${accumulatedPath}">${friendly}</a>`;
+                }
+
+                breadcrumbContainer.appendChild(li);
+            });
+        });
+
+    </script>
+
+
+<!-- #endregion -->
+
+    
+
+</body>
+</html>

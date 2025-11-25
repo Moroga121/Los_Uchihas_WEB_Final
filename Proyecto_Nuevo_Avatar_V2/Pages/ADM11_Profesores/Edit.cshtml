@@ -1,0 +1,122 @@
+﻿@page "/ADM11_Profesores/Edit/{id}"
+@model Proyecto_Nuevo_Avatar_V2.Pages.ADM11_Profesores.EditModel
+@{
+    ViewData["Title"] = "Editar Profesor";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/ADM_Usuarios.css" />
+
+<h2 class="text-center">
+    <i class="bi bi-pencil-square"></i> Editar Profesor
+</h2>
+
+<div class="card shadow p-4">
+    <form method="post">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">ID Profesor</label>
+                <input asp-for="ProfesorEditado.ID_Profesor" class="form-control" readonly />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Tipo de Identificación</label>
+                <input asp-for="ProfesorEditado.TipoIdentificacion" class="form-control" />
+                <span asp-validation-for="ProfesorEditado.TipoIdentificacion" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Número de Identificación</label>
+                <input asp-for="ProfesorEditado.NumeroIdentificacion" class="form-control" />
+                <span asp-validation-for="ProfesorEditado.NumeroIdentificacion" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Nombre Completo</label>
+                <input asp-for="ProfesorEditado.Nombre" class="form-control" placeholder="Ejemplo: María López" />
+                <span asp-validation-for="ProfesorEditado.Nombre" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Correo Electrónico</label>
+                <input asp-for="ProfesorEditado.Email" class="form-control" placeholder="Ejemplo: mlopez@cuc.ac.cr" />
+                <span asp-validation-for="ProfesorEditado.Email" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Fecha de Nacimiento</label>
+                <input asp-for="ProfesorEditado.FechaNacimiento" type="date" class="form-control" />
+                <span asp-validation-for="ProfesorEditado.FechaNacimiento" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Teléfono</label>
+                <input asp-for="ProfesorEditado.Telefono" class="form-control" placeholder="Ejemplo: 88889999" />
+                <span asp-validation-for="ProfesorEditado.Telefono" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-warning">
+                <i class="bi bi-save"></i> Actualizar
+            </button>
+            <a asp-page="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left-circle"></i> Volver
+            </a>
+
+        </div>
+    </form>
+</div>
+
+<!-- Modal de resultado -->
+<div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" id="resultModalHeader">
+                <h5 class="modal-title" id="resultModalLabel">Resultado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="resultModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mensaje = "@Html.Raw(TempData["Resultado"])";
+            const tipo = "@TempData["TipoMensaje"]";
+            const redireccion = "@TempData["Redireccion"]";
+
+            if (mensaje && mensaje.trim() !== "") {
+                const resultModal = new bootstrap.Modal(document.getElementById("resultModal"));
+                document.getElementById("resultModalBody").textContent = mensaje;
+                const title = document.getElementById("resultModalLabel");
+
+                title.textContent = (tipo === "exito") ? "Éxito" : "Error";
+
+                if (tipo === "exito") {
+                    resultModalHeader.className = "modal-header bg-success text-white";
+                } else {
+                    resultModalHeader.className = "modal-header bg-danger text-white";
+                }
+
+                resultModal.show();
+
+                document.getElementById("resultModal").addEventListener('hidden.bs.modal', function () {
+                    if (tipo === "exito" && redireccion) {
+                        window.location.href = `/ADM11_Profesores/${redireccion}`;
+                    }
+                });
+            }
+        });
+    </script>
+}
+

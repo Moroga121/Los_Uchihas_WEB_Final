@@ -1,0 +1,52 @@
+﻿@model List<Proyecto_Nuevo_Avatar_V2.Entities.Modulo>
+
+@if (Model != null && Model.Any())
+{
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+        @foreach (var modulo in Model)
+        {
+            <div class="sidebar-heading text-uppercase">
+                @modulo.Nombre_Modulo
+            </div>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse"
+                   data-target="#collapse_@modulo.Identificador_Modulo"
+                   aria-expanded="false" aria-controls="collapse_@modulo.Identificador_Modulo">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>@modulo.Nombre_Modulo</span>
+                </a>
+
+                <div id="collapse_@modulo.Identificador_Modulo" class="collapse"
+                     aria-labelledby="heading_@modulo.Identificador_Modulo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">@modulo.Nombre_Modulo:</h6>
+
+                        @if (modulo.Opciones != null && modulo.Opciones.Any())
+                        {
+                            @foreach (var opcion in modulo.Opciones)
+                            {
+                                <a class="collapse-item" asp-page="@opcion.Ruta">@opcion.Nombre</a>
+                            }
+                        }
+                        else
+                        {
+                            <span class="collapse-item text-muted">Sin opciones</span>
+                        }
+                    </div>
+                </div>
+            </li>
+
+            <hr class="sidebar-divider" />
+        }
+
+        <div class="text-center d-none d-md-inline">
+            <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        </div>
+    </ul>
+}
+else
+{
+    <p class="text-white p-3">No hay módulos disponibles.</p>
+}
