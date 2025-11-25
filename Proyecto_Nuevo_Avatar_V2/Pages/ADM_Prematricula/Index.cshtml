@@ -1,0 +1,201 @@
+﻿@page
+@model Proyecto_Nuevo_Avatar_V2.Pages.ADM_Prematricula.IndexModel
+@{
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/ADM_Usuarios.css" />
+
+
+<h2 class="text-center">Gestión de Prematriculas</h2>
+
+<p>
+    <a asp-page="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Crear nueva Prematricula
+    </a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>ID Prematricula</th>
+            <th>Numero Identificacion</th>
+            <th>Carrera</th>
+            <th>Curso</th>
+            <th>Observaciones</th>
+            <th>Pediodo</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Prematriculas != null && Model.Prematriculas.Any())
+        {
+            foreach (var prematricula in Model.PrematriculaPaginadas)
+            {
+                <tr>
+                    <td>@prematricula.id_prematricula</td>
+                    <td class="text-break">@prematricula.numero_identificacion</td>
+                    <td class="text-break">@prematricula.carrera</td>
+                    <td class="text-break">@prematricula.curso</td>
+                    <td class="text-break">@prematricula.observaciones</td>
+                    <td>@prematricula.Id_Periodo</td>
+
+                    <td>
+                        <a asp-page="Edit"
+                           asp-route-id="@prematricula.id_prematricula"
+                           class="btn btn-warning btn-sm">
+                            <i class="bi bi-pencil-square"></i> Editar
+                        </a>
+
+                        <button type="button"
+                                class="btn btn-danger btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#confirmDeleteModal"
+                                data-id="@prematricula.id_prematricula"
+                                data-numero-identificacion="@prematricula.numero_identificacion">
+                            <i class="bi bi-trash3"></i> Eliminar
+                        </button>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="7" class="text-center">No hay prematriculas registradas.</td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+@if (Model.TotalPaginas > 1)
+{
+    <div id="paginacion" class="my-3 d-flex justify-content-center">
+        <nav aria-label="Paginación de parámetros">
+            <ul class="pagination pagination-sm mb-0">
+                <!-- Botón Página Anterior -->
+                @if (Model.PaginaActual > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="?numeroPagina=@(Model.PaginaActual - 1)" aria-label="Anterior">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                }
+
+                <!-- Números de Página -->
+                @for (int i = 1; i <= Model.TotalPaginas; i++)
+                {
+                    <li class="page-item @(i == Model.PaginaActual ? "active" : "")">
+                        <a class="page-link" href="?numeroPagina=@i">@i</a>
+                    </li>
+                }
+
+                <!-- Botón Página Siguiente -->
+                @if (Model.PaginaActual < Model.TotalPaginas)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="?numeroPagina=@(Model.PaginaActual + 1)" aria-label="Siguiente">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+}
+
+
+
+<!--Modal de resultados -->
+<div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" id="resultModalHeader">
+                <h5 class="modal-title" id="resultModalLabel">Resultado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="resultModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal de confirmación de eliminación -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar eliminación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Seguro que deseas eliminar el parámetro <strong id="PrematriculaNombre"></strong>?
+            </div>
+            <div class="modal-footer">
+                <form method="post" asp-page-handler="Delete" id="deleteForm">
+                    <input type="hidden" name="id" id="PrematriculaIdEliminar" />
+                    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mensaje = @Html.Raw(Json.Serialize(TempData["Resultado"] ?? ""));
+            const tipo = "@(TempData["TipoMensaje"] ?? "")";
+
+            if (mensaje && mensaje.toString().trim() !== "") {
+                const resultModalBody = document.getElementById("resultModalBody");
+                const resultModalTitle = document.getElementById("resultModalLabel");
+                const resultModalHeader = document.getElementById("resultModalHeader");
+
+                if (resultModalTitle && resultModalBody && resultModalHeader) {
+                    resultModalTitle.textContent = (tipo === "exito") ? "Éxito" : "Error";
+
+                    if (tipo === "exito") {
+                        resultModalHeader.className = "modal-header bg-success text-white";
+                    } else {
+                        resultModalHeader.className = "modal-header bg-danger text-white";
+                    }
+
+                    resultModalBody.textContent = mensaje;
+                    const modal = new bootstrap.Modal(document.getElementById("resultModal"));
+                    modal.show();
+                }
+            }
+        });
+
+        (function () {
+            const confirmDeleteModal = document.getElementById('confirmDeleteModal');
+            if (!confirmDeleteModal) return;
+
+            confirmDeleteModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                if (!button) return;
+
+                const idPrematricula = button.getAttribute('data-id');
+                const numeroIdentificacion = button.getAttribute('data-numero-identificacion');
+
+                const inputId = document.getElementById('PrematriculaIdEliminar');
+                const nombreElem = document.getElementById('PrematriculaNombre');
+
+                if (inputId) inputId.value = idPrematricula ?? '';
+                if (nombreElem) nombreElem.innerText = numeroIdentificacion ?? '';
+            });
+        })();
+    </script>
+}
+
+

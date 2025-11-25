@@ -162,6 +162,13 @@ builder.Services.AddHttpClient<IGrupoApiClient, GrupoApiClient>(client =>
     client.BaseAddress = new Uri(baseUrl);
 });
 
+// Cliente para Prematriculas
+builder.Services.AddHttpClient<IPrematriculaApiClient, PrematriculaApiClient>(client =>
+{
+    var baseUrl = builder.Configuration["PrematriculaApi:BaseUrl"]
+                  ?? throw new InvalidOperationException("PrematriculaApi:BaseUrl no configurado");
+    client.BaseAddress = new Uri(baseUrl);
+});
 
 var app = builder.Build();
 
