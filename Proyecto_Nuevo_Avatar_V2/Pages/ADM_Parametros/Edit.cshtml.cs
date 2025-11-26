@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Proyecto_Nuevo_Avatar_V2.Entities;
 using Proyecto_Nuevo_Avatar_V2.Services;
 
@@ -18,6 +19,11 @@ namespace Proyecto_Nuevo_Avatar_V2.Pages.ADM_Parametros
 
         [BindProperty]
         public Parametrizacion ParametroEditado { get; set; } = new();
+        #region 
+        public List<SelectListItem>? ListaPeriodos { get; set; }
+        public List<SelectListItem>? ListaCarreras { get; set; }
+        public List<SelectListItem>? ListaCursos { get; set; }
+        #endregion
 
         #region "Validar Token"
 

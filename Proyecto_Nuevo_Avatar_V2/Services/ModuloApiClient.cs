@@ -94,7 +94,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
                         new Opcion { Nombre = "Administrar Profesores", Ruta = "/ADM11_Profesores/Index" },
                         new Opcion { Nombre = "Administrar Periodos", Ruta = "/ADM12_Periodos/Index" },
                         new Opcion { Nombre = "Administrar Grupos", Ruta = "/ADM13_Grupos/Index" },
-                        new Opcion { Nombre = "Gestionar Prematricula", Ruta = "#" },
+                        new Opcion { Nombre = "Gestionar Prematricula", Ruta = "/ADM_Prematricula/Index" },
                         new Opcion { Nombre = "Gestionar Matrícula", Ruta = "#" },
                         new Opcion { Nombre = "Administrar Expedientes", Ruta = "#" },
                         new Opcion { Nombre = "Consultar Promedios", Ruta = "/ACA1/Index" },
