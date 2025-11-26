@@ -13,7 +13,34 @@
         <i class="bi bi-plus-circle"></i> Crear nueva Prematricula
     </a>
 </p>
+<form method="get" id="filtroForm" class="mb-4">
+    <div class="row g-3 align-items-center">
+        <div class="col-md-2">
+            <label for="FiltroPeriodo" class="form-label">Tipo</label>
+            <select id="FiltroPeriodo" name="FiltroPeriodo" class="form-select">
+                <option value="">Seleccione un Periodo</option>
+                @foreach (var tipos_per in Model.Periodos)
+                {
+                    <option value="@tipos_per.ID_Periodo" selected="@(Model.FiltroPeriodo == tipos_per.ID_Periodo)">
+                        @tipos_per.ID_Periodo
+                    </option>
+                }
+            </select>
+        </div>
+    </div>
 
+    <div class="mt-3 text-end">
+
+        <button type="submit" class="btn btn-success" id="btnBuscar">
+            <i class="bi bi-search"></i> Buscar
+        </button>
+
+        <a asp-page="Index" class="btn btn-secondary">
+            <i class="bi bi-eraser"></i> Limpiar
+        </a>
+
+    </div>
+</form>
 <table class="table table-bordered table-striped">
     <thead class="table-dark">
         <tr>

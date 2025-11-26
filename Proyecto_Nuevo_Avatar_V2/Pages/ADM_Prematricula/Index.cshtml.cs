@@ -68,45 +68,56 @@ namespace Proyecto_Nuevo_Avatar_V2.Pages.ADM_Prematricula
         public List<Periodo> Periodos { get; set; } = new();
 
         #endregion
+
+        #region "Filtros de búsqueda"
+        [BindProperty(SupportsGet = true)] public string FiltroPeriodo { get; set; }
+
+        #endregion
         public async Task<IActionResult> OnGetAsync(int numeroPagina = 1)
         {
             ViewData["Nombre"] = HttpContext.Session.GetString("Nombre");
             ViewData["Email"] = HttpContext.Session.GetString("Email");
             ViewData["Rol"] = HttpContext.Session.GetString("Rol");
-            // Cargar configuración de paginación desde appsettings
 
             TamanoPagina = _configuration.GetValue<int>("Pagination:PageSize");
 
             var token = await GetValidAccessTokenAsync();
+            if (token == null) return RedirectToPage("/Login/Login");
 
-            if (token == null)
+            var periodosTask = _periodoApiClient.ObtenerTodosAsync(token);
+            var prematriculasTask = _prematriculaApiClient.Obtener_Todas_Prematriculas(token);
+
+            await Task.WhenAll(periodosTask, prematriculasTask);
+
+            Periodos = periodosTask.Result ?? new List<Periodo>();
+            var todasPrematriculas = prematriculasTask.Result ?? new List<Prematricula>();
+
+            if (!string.IsNullOrEmpty(FiltroPeriodo))
             {
-
-                return RedirectToPage("/Login/Login");
-
+                Prematriculas = todasPrematriculas
+                    .Where(p => p.Id_Periodo == FiltroPeriodo)
+                    .ToList();
+            }
+            else
+            {
+                Prematriculas = todasPrematriculas;
             }
 
+            TotalRegistros = Prematriculas.Count;
+            TotalPaginas = (int)Math.Ceiling(TotalRegistros / (double)TamanoPagina);
+            if (TotalPaginas == 0) TotalPaginas = 1;
 
-            var listaprematriculas = await _prematriculaApiClient.Obtener_Todas_Prematriculas (token);
-            if (listaprematriculas != null)
-            {
-                Prematriculas = listaprematriculas;
+            PaginaActual = numeroPagina < 1 ? 1 : numeroPagina;
+            PaginaActual = PaginaActual > TotalPaginas ? TotalPaginas : PaginaActual;
 
-                TotalRegistros = listaprematriculas.Count;
-                TotalPaginas = (int)Math.Ceiling(TotalRegistros / (double)TamanoPagina);
-
-                // Validar y ajustar el número de página
-
-                PaginaActual = numeroPagina < 1 ? 1 : numeroPagina;
-                PaginaActual = PaginaActual > TotalPaginas ? TotalPaginas : PaginaActual;
-
-                // Aplicar paginación
-                PrematriculaPaginadas = Prematriculas.Skip((PaginaActual - 1) * TamanoPagina).Take(TamanoPagina).ToList();
-
-            }
+            PrematriculaPaginadas = Prematriculas
+                .Skip((PaginaActual - 1) * TamanoPagina)
+                .Take(TamanoPagina)
+                .ToList();
 
             return Page();
         }
+
 
         public async Task<IActionResult> OnPostDeleteAsync(string id)
         {
