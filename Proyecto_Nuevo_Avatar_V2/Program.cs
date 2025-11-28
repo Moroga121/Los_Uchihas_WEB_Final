@@ -170,6 +170,23 @@ builder.Services.AddHttpClient<IPrematriculaApiClient, PrematriculaApiClient>(cl
     client.BaseAddress = new Uri(baseUrl);
 });
 
+
+// Cliente para Expedientes
+builder.Services.AddHttpClient<IExpedientesApiClient, ExpedienteApiClient>(client =>
+{
+    var baseUrl = builder.Configuration["ExpedienteApi:BaseUrl"]
+                  ?? throw new InvalidOperationException("ExpedienteApi:BaseUrl no configurado");
+    client.BaseAddress = new Uri(baseUrl);
+});
+
+// Cliente para Direcciones
+builder.Services.AddHttpClient<IDireccionesApiClient, DireccionesApiClient>(client =>
+{
+    var baseUrl = builder.Configuration["DireccionApi:BaseUrl"]
+                  ?? throw new InvalidOperationException("DireccionApi:BaseUrl no configurado");
+    client.BaseAddress = new Uri(baseUrl);
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -1,0 +1,138 @@
+﻿@page
+@model Proyecto_Nuevo_Avatar_V2.Pages.ADM_Expedientes.CreateModel
+@{
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/ADM_Usuarios.css" />
+
+<h2 class="text-center">
+    <i class="bi bi-plus-circle"></i> Crear nuevo Expediente
+</h2>
+
+<div class="card shadow p-4">
+    <form method="post">
+
+        <!-- Número Identificación -->
+        <div class="form-group mb-3">
+            <label class="form-label">Número de Identificación</label>
+            <input asp-for="NuevoExpediente.numero_identificacion"
+                   class="form-control"
+                   placeholder="Número de Identificación" />
+            <span asp-validation-for="NuevoExpediente.numero_identificacion"
+                  class="text-danger"></span>
+        </div>
+
+        <!-- Fecha Nacimiento -->
+        <div class="form-group mb-3">
+            <label class="form-label">Fecha de Nacimiento</label>
+            <input asp-for="NuevoExpediente.fecha_nacimiento"
+                   type="date"
+                   class="form-control" />
+            <span asp-validation-for="NuevoExpediente.fecha_nacimiento"
+                  class="text-danger"></span>
+        </div>
+
+        <!-- Distrito -->
+        <div class="form-group mb-3">
+            <label class="form-label">Distrito</label>
+            <input asp-for="NuevoExpediente.id_distrito"
+                   class="form-control"
+                   placeholder="Código de distrito" />
+            <span asp-validation-for="NuevoExpediente.id_distrito"
+                  class="text-danger"></span>
+        </div>
+
+        <!-- Teléfono -->
+        <div class="form-group mb-3">
+            <label class="form-label">Teléfono</label>
+            <input asp-for="NuevoExpediente.telefono"
+                   class="form-control"
+                   placeholder="Teléfono" />
+            <span asp-validation-for="NuevoExpediente.telefono"
+                  class="text-danger"></span>
+        </div>
+
+        <!-- Otras señas -->
+        <div class="form-group mb-4">
+            <label class="form-label">Otras Señas</label>
+            <textarea asp-for="NuevoExpediente.otras_senas"
+                      class="form-control"
+                      placeholder="Otras señas"
+                      rows="3"></textarea>
+            <span asp-validation-for="NuevoExpediente.otras_senas"
+                  class="text-danger"></span>
+        </div>
+
+        <!-- Botones -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-save"></i> Guardar
+            </button>
+            <a asp-page="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left-circle"></i> Volver
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- MODAL DE RESULTADOS -->
+<div class="modal fade" id="resultModal" tabindex="-1"
+     aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" id="resultModalHeader">
+                <h5 class="modal-title" id="resultModalLabel">Resultado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="resultModalBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mensaje = @Html.Raw(Json.Serialize(TempData["Resultado"]));
+            const tipo = "@TempData["TipoMensaje"]";
+            const redireccion = "@TempData["Redireccion"]";
+
+            if (mensaje && mensaje.trim() !== "") {
+                const resultModalBody = document.getElementById("resultModalBody");
+                const resultModalTitle = document.getElementById("resultModalLabel");
+                const resultModalHeader = document.getElementById("resultModalHeader");
+
+                resultModalTitle.textContent = (tipo === "exito") ? "Éxito" : "Error";
+
+                if (tipo === "exito") {
+                    resultModalHeader.className = "modal-header bg-success text-white";
+                } else {
+                    resultModalHeader.className = "modal-header bg-danger text-white";
+                }
+
+                resultModalBody.textContent = mensaje;
+
+                const modal = new bootstrap.Modal(document.getElementById("resultModal"));
+                modal.show();
+
+                document
+                    .getElementById("resultModal")
+                    .addEventListener('hidden.bs.modal', function () {
+                        if (tipo === "exito" && redireccion) {
+                            window.location.href = `/ADM_Expedientes/${redireccion}`;
+                        }
+                    });
+            }
+        });
+    </script>
+}
