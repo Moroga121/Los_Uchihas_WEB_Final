@@ -171,6 +171,16 @@ builder.Services.AddHttpClient<IPrematriculaApiClient, PrematriculaApiClient>(cl
 });
 
 
+// Cliente para Matriculas
+
+builder.Services.AddHttpClient<IMatriculaApiClient, MatriculaApiClient>(client =>
+{
+    var baseUrl = builder.Configuration["MatriculaApi:BaseUrl"]
+                  ?? throw new InvalidOperationException("MatriculaApi:BaseUrl no configurado");
+    client.BaseAddress = new Uri(baseUrl);
+});
+
+
 // Cliente para Expedientes
 builder.Services.AddHttpClient<IExpedientesApiClient, ExpedienteApiClient>(client =>
 {
