@@ -1,0 +1,311 @@
+﻿@page
+@model Proyecto_Nuevo_Avatar_V2.Pages.ADM17_Notas.IndexModel
+@{
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/ADM_Usuarios.css" />
+
+
+<h2 class="text-center mb-4">
+    <i class="bi bi-pencil-square"></i> Gestión Académica
+</h2>
+
+<div class="row">
+
+    <!-- TARJETA 1: Cargar Desglose -->
+    <div class="col-md-6">
+        <div class="card shadow p-4 mb-4">
+            <h4 class="text-center mb-3">
+                <i class="bi bi-plus-circle"></i> Cargar Desglose
+            </h4>
+
+            <form>
+
+                <!--Curso-->
+                <div class="form-group mb-3">
+                    <label class="form-label">Curso</label>
+                    <select id="CursoSeleccionado_Rubro" class="form-control">
+                        <option value="">Seleccione un Curso</option>
+                        @foreach (var c in Model.Cursos)
+                        {
+                            <option value="@c.Value">@c.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <!--Grupo (oculto al inicio)-->
+                <div id="grupoContainer_Rubro" class="form-group mb-3" style="display:none;">
+                    <label class="form-label">Grupo</label>
+                    <select id="GrupoSeleccionado_Rubro" class="form-control">
+                        <option value="">Seleccione un Grupo</option>
+                    </select>
+                </div>
+
+                <a id="goToDesglose" class="btn btn-success disabled">
+                    <i class="bi bi-upload"></i> Cargar Desglose
+                </a>
+
+
+            </form>
+
+        </div>
+    </div>
+
+    <!-- TARJETA 2: Asignar Nota -->
+    <div class="col-md-6">
+        <div class="card shadow p-4 mb-4">
+            <h4 class="text-center mb-3">
+                <i class="bi bi-journal-check"></i> Asignar Nota
+            </h4>
+
+            <form>
+
+                <!--Curso-->
+                <div class="form-group mb-3">
+                    <label class="form-label">Curso</label>
+                    <select id="CursoSeleccionado_Nota" class="form-control">
+                        <option value="">Seleccione un Curso</option>
+                        @foreach (var c in Model.Cursos)
+                        {
+                            <option value="@c.Value">@c.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <!--Grupo (oculto al inicio)-->
+                <div id="grupoContainer_Nota" class="form-group mb-3" style="display:none;">
+                    <label class="form-label">Grupo</label>
+                    <select id="GrupoSeleccionado_Nota" class="form-control">
+                        <option value="">Seleccione un Grupo</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="form-label>">Identificación Estudiante</label>
+                    <input type="text" id="CedulaEstudiante" class="form-control" placeholder="Ej: 304530122" />
+                </div>
+
+                <a id="goToNota" class="btn btn-success disabled">
+                    <i class="bi bi-upload"></i> Asignar Nota
+                </a>
+
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+
+
+<!--Modal de resultados -->
+<div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" id="resultModalHeader">
+                <h5 class="modal-title" id="resultModalLabel">Resultado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="resultModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script><!--Necesario para el uso de los modal-->
+
+    <!--Manejo del modal de resultados-->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mensaje = @Html.Raw(Json.Serialize(TempData["Resultado"]));
+            const tipo = "@TempData["TipoMensaje"]";
+            const redireccion = "@TempData["Redireccion"]";
+
+            if (mensaje && mensaje.trim() !== "") {
+                const resultModalBody = document.getElementById("resultModalBody");
+                const resultModalTitle = document.getElementById("resultModalLabel");
+                const resultModal = new bootstrap.Modal(document.getElementById("resultModal"));
+
+                    resultModalTitle.textContent = (tipo === "exito") ? "Éxito" : "Error";
+
+                    if (tipo === "exito") {
+                        resultModalHeader.className = "modal-header bg-success text-white";
+                    } else {
+                        resultModalHeader.className = "modal-header bg-danger text-white";
+                    }
+
+                resultModalBody.textContent = mensaje;
+
+                // Mostrar el modal
+                resultModal.show();
+
+                // Cuando el modal se cierre, redirige
+                document.getElementById("resultModal").addEventListener('hidden.bs.modal', function () {
+                    if (tipo === "exito" && redireccion) {
+                        window.location.href = `/ADM_Prematricula/${redireccion}`;
+                    }
+                });
+            }
+        });
+    </script>
+    <!--Cargado de combobox y envio de get de Tarjeta de notas-->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const cursoSelect = document.getElementById("CursoSeleccionado_Nota");
+            const grupoContainer = document.getElementById("grupoContainer_Nota");
+            const grupoSelect = document.getElementById("GrupoSeleccionado_Nota");
+            const identificacionSelect = document.getElementById("CedulaEstudiante");
+            const link = document.getElementById("goToNota");
+
+            // Construye URL y actualiza el anchor (usa encodeURIComponent)
+            function actualizarLink() {
+                const curso = cursoSelect.options[cursoSelect.selectedIndex]?.text || "";
+                const grupo = grupoSelect.value || "";
+                const identificacion = identificacionSelect.value?.trim() || "";
+
+                // Si querés exigir identificación antes de activar:
+                const habilitar = curso && grupo && identificacion;
+
+                if (habilitar) {
+                    // Ruta absoluta (mejor) y escape de valores
+                    link.href = `ADM17_Notas/AsignarNota?curso=${encodeURIComponent(curso)}&grupo=${encodeURIComponent(grupo)}&identificacion=${encodeURIComponent(identificacion)}`;
+                    link.classList.remove("disabled");
+                } else {
+                    // Si no está completa, quitar href y deshabilitar
+                    link.removeAttribute("href");
+                    link.classList.add("disabled");
+                }
+            }
+
+            // Cuando cambie el curso (carga grupos)
+            cursoSelect.addEventListener("change", function () {
+
+                const cursoId = this.value;
+
+                if (!cursoId) {
+                    grupoContainer.style.display = "none";
+                    grupoSelect.innerHTML = '<option value="">Seleccione un Curso primero</option>';
+                    actualizarLink();
+                    return;
+                }
+
+                grupoContainer.style.display = "block";
+                grupoSelect.innerHTML = '<option value="">Cargando grupos...</option>';
+
+                fetch(`?handler=GruposPorCurso&cursoId=${cursoId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        grupoSelect.innerHTML = '<option value="">Seleccione un Grupo</option>';
+
+                        if (data.length === 0) {
+                            grupoSelect.innerHTML = '<option value="">No hay grupos disponibles</option>';
+                            actualizarLink();
+                            return;
+                        }
+
+                        data.forEach(item => {
+                            const option = document.createElement("option");
+                            option.value = item.value;
+                            option.text = item.text;
+                            grupoSelect.appendChild(option);
+                        });
+
+                        actualizarLink();
+                    })
+                    .catch(() => {
+                        grupoSelect.innerHTML = '<option value="">Error cargando grupos</option>';
+                        actualizarLink();
+                    });
+            });
+
+            // Cuando cambie el grupo
+            grupoSelect.addEventListener("change", actualizarLink);
+
+            identificacionSelect.addEventListener("input", actualizarLink);
+
+            actualizarLink();
+        });
+    </script>
+
+    <!--Cargado de combobox y envio de get de Tarjeta de Rubros-->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const cursoSelect = document.getElementById("CursoSeleccionado_Rubro");
+            const grupoContainer = document.getElementById("grupoContainer_Rubro");
+            const grupoSelect = document.getElementById("GrupoSeleccionado_Rubro");
+
+            const link = document.getElementById("goToDesglose");
+
+
+            function actualizarLink() {
+                const curso = cursoSelect.options[cursoSelect.selectedIndex].text;
+                const grupo = grupoSelect.value;
+
+                if (curso && grupo) {
+                    link.href = `ADM17_Notas/CargarDesglose?curso=${curso}&grupo=${grupo}`;
+                    link.classList.remove("disabled");
+                } else {
+                    link.removeAttribute("href");
+                    link.classList.add("disabled");
+                }
+            }
+
+            cursoSelect.addEventListener("change", function () {
+
+                const cursoId = this.value;
+
+                if (!cursoId) {
+                    grupoContainer.style.display = "none";
+                    grupoSelect.innerHTML = '<option value="">Seleccione un Curso primero</option>';
+
+                    actualizarLink(); 
+                    return;
+                }
+
+                // Mostrar el select de grupos
+                grupoContainer.style.display = "block";
+                grupoSelect.innerHTML = '<option value="">Cargando grupos...</option>';
+
+                // Llamada al handler original
+                fetch(`?handler=GruposPorCurso&cursoId=${cursoId}`)
+                    .then(response => response.json())
+                    .then(data => {
+
+                        grupoSelect.innerHTML = '<option value="">Seleccione un Grupo</option>';
+
+                        if (data.length === 0) {
+                            grupoSelect.innerHTML = '<option value="">No hay grupos disponibles</option>';
+                            actualizarLink();
+                            return;
+                        }
+
+                        data.forEach(item => {
+                            const option = document.createElement("option");
+                            option.value = item.value;
+                            option.text = item.text;
+                            grupoSelect.appendChild(option);
+                        });
+
+                        actualizarLink(); 
+                    })
+                    .catch(() => {
+                        grupoSelect.innerHTML = '<option value="">Error cargando grupos</option>';
+                    });
+            });
+
+            // ⭐ Evento original para el cambio de grupo
+            grupoSelect.addEventListener("change", actualizarLink);
+        });
+    </script>
+
+
+
+}

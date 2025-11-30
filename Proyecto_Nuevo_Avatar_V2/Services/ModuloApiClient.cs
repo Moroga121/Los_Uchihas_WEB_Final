@@ -111,7 +111,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
                             modulo.Opciones = new List<Opcion>
                     {
                         new Opcion { Nombre = "Administrar Grupos", Ruta = "/ADM13_Grupos/Index" },
-                        new Opcion { Nombre = "Cargar Desglose de Rubros", Ruta = "/PROF_Rubros/Index" },
+                        new Opcion { Nombre = "Cargar Desglose de Rubros", Ruta = "/ADM17_Notas/Index" },
                         new Opcion { Nombre = "Consultar Promedios", Ruta = "/ACA1/Index" }
                     };
                             break;

@@ -1,0 +1,173 @@
+﻿@page
+@model Proyecto_Nuevo_Avatar_V2.Pages.ADM17_Notas.CargarDesgloseModel
+@{
+    ViewData["Title"] = "Cargar Desglose";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/ADM_Usuarios.css" />
+
+<h2 class="mt-3">Desglose del Curso: @Model.Curso — Grupo: @Model.Grupo</h2>
+
+<hr />
+
+@if (!Model.TieneDesglose)
+{
+    <p>Sin desglose.</p>
+
+    <a asp-page="./CargarDesglose"
+       asp-route-curso="@Model.Curso"
+       asp-route-grupo="@Model.Grupo"
+       asp-route-nuevo="true"
+       class="btn btn-primary">
+        Crear nuevo desglose
+    </a>
+
+    <a asp-page="/ADM17_Notas/Index" class="btn btn-secondary ms-2">
+        Volver
+    </a>
+}
+else
+{
+    <form method="post">
+        <input type="hidden" name="Curso" value="@Model.Curso" />
+        <input type="hidden" name="Grupo" value="@Model.Grupo" />
+
+        <table class="table table-bordered table-hover mt-3">
+            <thead class="table-dark">
+                <tr>
+                    <th>Id Rubro</th>
+                    <th>Nombre Rubro</th>
+                    <th>Porcentaje (%)</th>
+                </tr>
+            </thead>
+
+            <tbody id="tablaRubros">
+                @for (int i = 0; i < Model.Rubros.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            <input class="form-control"
+                                   name="Rubros[@i].id_rubro"
+                                   value="@Model.Rubros[i].id_rubro"
+                                   maxlength="10" />
+                        </td>
+                        <td>
+                            <input class="form-control"
+                                   name="Rubros[@i].nombre"
+                                   value="@Model.Rubros[i].nombre"
+                                   maxlength="50" />
+                        </td>
+
+                        <td>
+                            <input type="number"
+                                   step="0.01"
+                                   max="100"
+                                   min="0"
+                                   class="form-control"
+                                   name="Rubros[@i].porcentaje"
+                                   value="@Model.Rubros[i].porcentaje.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+
+        <!-- Botones -->
+        <button type="button" class="btn btn-primary" onclick="agregarRubro()">Agregar Rubro</button>
+
+        <button type="button" class="btn btn-danger ms-2" onclick="quitarRubro()">Quitar Rubro</button>
+
+        <button type="submit" asp-page-handler="Guardar" class="btn btn-success ms-2">
+            Guardar cambios
+        </button>
+
+        <a asp-page="/ADM17_Notas/Index" class="btn btn-secondary ms-2">Volver</a>
+    </form>
+    <!--Modal de resultados -->
+    <div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" id="resultModalHeader">
+                    <h5 class="modal-title" id="resultModalLabel">Resultado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body" id="resultModalBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!--Necesario para el uso de los modal-->
+    <script>
+                document.addEventListener('DOMContentLoaded', function () {
+            const mensaje = @Html.Raw(Json.Serialize(TempData["Resultado"]));
+            const tipo = "@TempData["TipoMensaje"]";
+            const redireccion = "@TempData["Redireccion"]";
+
+            if (mensaje && mensaje.trim() !== "") {
+                const resultModalBody = document.getElementById("resultModalBody");
+                const resultModalTitle = document.getElementById("resultModalLabel");
+                const resultModalHeader = document.getElementById("resultModalHeader");  
+                const resultModal = new bootstrap.Modal(document.getElementById("resultModal"));
+
+                resultModalTitle.textContent = (tipo === "exito") ? "Éxito" : "Error";
+
+                if (tipo === "exito") {
+                    resultModalHeader.className = "modal-header bg-success text-white";
+                } else {
+                    resultModalHeader.className = "modal-header bg-danger text-white";
+                }
+
+                resultModalBody.textContent = mensaje;
+
+                resultModal.show();
+
+                document.getElementById("resultModal").addEventListener('hidden.bs.modal', function () {
+                    if (tipo === "exito" && redireccion) {
+                        window.location.href = `/ADM17_Notas/${redireccion}`;
+                    }
+                });
+            }
+        });
+
+    </script>
+    <script>
+        let curso = "@Model.Curso";
+        let grupo = "@Model.Grupo";
+        let contador = @Model.Rubros.Count;
+
+        function agregarRubro() {
+
+            const tbody = document.getElementById("tablaRubros");
+
+            const fila = document.createElement("tr");
+
+            fila.innerHTML = `
+                <td><input class="form-control" name="Rubros[${contador}].id_rubro" maxlength="10" /></td>
+                <td><input class="form-control" name="Rubros[${contador}].nombre" maxlength="50" /></td>
+                <td><input type="number" step="0.01" max="100" min="0" class="form-control" name="Rubros[${contador}].porcentaje" /></td>
+            `;
+
+            tbody.appendChild(fila);
+            contador++;
+        }
+
+        function quitarRubro() {
+
+            const tbody = document.getElementById("tablaRubros");
+
+            if (tbody.rows.length > 0) {
+                tbody.deleteRow(tbody.rows.length - 1);
+                contador--;
+            }
+        }
+    </script>
+}

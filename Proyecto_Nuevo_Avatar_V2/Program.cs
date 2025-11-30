@@ -169,6 +169,13 @@ builder.Services.AddHttpClient<IPrematriculaApiClient, PrematriculaApiClient>(cl
                   ?? throw new InvalidOperationException("PrematriculaApi:BaseUrl no configurado");
     client.BaseAddress = new Uri(baseUrl);
 });
+// Cliente para Rubros y Notas
+builder.Services.AddHttpClient<IRubros_NotasApiClient, Rubros_NotasApiClient>(client =>
+{
+    var baseUrl = builder.Configuration["Rubros_NotasApi:BaseUrl"]
+                  ?? throw new InvalidOperationException("Rubros_NotasApi:BaseUrl no configurado");
+    client.BaseAddress = new Uri(baseUrl);
+});
 
 var app = builder.Build();
 
