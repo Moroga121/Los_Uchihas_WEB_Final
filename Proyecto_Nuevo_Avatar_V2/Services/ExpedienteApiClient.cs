@@ -56,7 +56,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
             }
         }
 
-        #region CRUD Prematriculas
+        #region CRUD Expediente
         public async Task<(bool Exito, string Mensaje, ExpedienteDto? Datos)> CRUDExpedientes(ExpedienteDto expediente, string accessToken, string accion, CancellationToken ct = default)
         {
             HttpMethod method;

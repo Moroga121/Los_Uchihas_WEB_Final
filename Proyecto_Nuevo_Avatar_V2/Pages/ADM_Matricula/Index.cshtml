@@ -94,30 +94,20 @@
 
 <h2 class="text-center">Matriculados</h2>
 
-<form method="get" id="filtroMatriculaForm" class="mb-4">
+<form method="get" id="filtroForm" class="mb-4">
 
     <div class="row g-3 align-items-center">
 
         <!-- Filtro Curso -->
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label for="CursoFiltro" class="form-label">Curso</label>
-            <input type="text"
-                   class="form-control"
-                   id="CursoFiltro"
-                   name="CursoFiltro"
-                   value="@Model.CursoFiltro"
-                   placeholder="Ej: Matemática Básica" />
+            <input type="text" class="form-control" id="CursoFiltro" name="CursoFiltro" value="@Model.CursoFiltro" placeholder="Ej: Matemática Básica" />
         </div>
 
         <!-- Filtro Grupo -->
         <div class="col-md-3">
             <label for="GrupoFiltro" class="form-label">Grupo</label>
-            <input type="text"
-                   class="form-control"
-                   id="GrupoFiltro"
-                   name="GrupoFiltro"
-                   value="@Model.GrupoFiltro"
-                   placeholder="Ej: G1" />
+            <input type="text" class="form-control" id="GrupoFiltro" name="GrupoFiltro" value="@Model.GrupoFiltro" placeholder="Ej: G1" />
         </div>
 
        

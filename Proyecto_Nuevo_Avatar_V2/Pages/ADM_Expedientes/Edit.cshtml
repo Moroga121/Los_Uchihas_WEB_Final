@@ -53,11 +53,32 @@
             <span asp-validation-for="ExpedienteEditado.fecha_nacimiento" class="text-danger"></span>
         </div>
 
+        <!-- Provincia -->
+        <div class="form-group mb-3">
+            <label class="form-label">Provincia</label>
+            <select id="ProvinciaSelect" class="form-select">
+                <option value="">Seleccione una provincia</option>
+                @foreach (var p in Model.Provincias)
+                {
+                    <option value="@p.id_provincia">@p.nombre</option>
+                }
+            </select>
+        </div>
+
+        <!-- Cantón -->
+        <div class="form-group mb-3">
+            <label class="form-label">Cantón</label>
+            <select id="CantonSelect" class="form-select" disabled>
+                <option value="">Seleccione un cantón</option>
+            </select>
+        </div>
+
         <!-- Distrito -->
         <div class="form-group mb-3">
             <label class="form-label">Distrito</label>
-            <input asp-for="ExpedienteEditado.id_distrito" class="form-control" />
-            <span asp-validation-for="ExpedienteEditado.id_distrito" class="text-danger"></span>
+            <select id="DistritoSelect" asp-for="ExpedienteEditado.id_distrito" class="form-select" disabled>
+                <option value="">Seleccione un distrito</option>
+            </select>
         </div>
 
         <!-- Teléfono -->
@@ -140,4 +161,63 @@
             }
         });
     </script>
+
+
+
+
+
+    <script>
+        const provinciaSelect = document.getElementById('ProvinciaSelect');
+        const cantonSelect = document.getElementById('CantonSelect');
+        const distritoSelect = document.getElementById('DistritoSelect');
+
+        provinciaSelect.addEventListener('change', async () => {
+            const provinciaNombre = provinciaSelect.options[provinciaSelect.selectedIndex].text;
+
+            cantonSelect.innerHTML = '<option value="">Cargando...</option>';
+            cantonSelect.disabled = true;
+            distritoSelect.innerHTML = '<option value="">Seleccione un distrito</option>';
+            distritoSelect.disabled = true;
+
+            if (!provinciaNombre) {
+                cantonSelect.innerHTML = '<option value="">Seleccione un cantón</option>';
+                return;
+            }
+
+            // Fetch cantones usando el nombre de la provincia
+            const res = await fetch(`?handler=Cantones&provincia=${encodeURIComponent(provinciaNombre)}`);
+            const cantones = await res.json();
+
+            cantonSelect.innerHTML = '<option value="">Seleccione un cantón</option>';
+            cantones.forEach(c => {
+                cantonSelect.innerHTML += `<option value="${c.nombre}">${c.nombre}</option>`;
+            });
+            cantonSelect.disabled = false;
+        });
+
+        cantonSelect.addEventListener('change', async () => {
+            const provinciaNombre = provinciaSelect.options[provinciaSelect.selectedIndex].text;
+            const cantonNombre = cantonSelect.value;
+
+            distritoSelect.innerHTML = '<option value="">Cargando...</option>';
+            distritoSelect.disabled = true;
+
+            if (!cantonNombre) {
+                distritoSelect.innerHTML = '<option value="">Seleccione un distrito</option>';
+                return;
+            }
+
+            // Fetch distritos usando nombre de provincia y nombre de cantón
+            const res = await fetch(`?handler=Distritos&provincia=${encodeURIComponent(provinciaNombre)}&canton=${encodeURIComponent(cantonNombre)}`);
+            const distritos = await res.json();
+
+            distritoSelect.innerHTML = '<option value="">Seleccione un distrito</option>';
+            distritos.forEach(d => {
+                distritoSelect.innerHTML += `<option value="${d.id_distrito}">${d.nombre_distrito}</option>`;
+            });
+            distritoSelect.disabled = false;
+        });
+    </script>
+
+
 }
