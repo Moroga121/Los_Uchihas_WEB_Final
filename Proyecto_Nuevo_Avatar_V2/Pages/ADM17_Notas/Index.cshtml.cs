@@ -60,7 +60,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Pages.ADM17_Notas
         [BindProperty] public string GrupoSeleccionado { get; set; }
         [BindProperty] public string CedulaEstudiante { get; set; }
 
-        #region Listas 
+        #region Listas selects
         public List<SelectListItem> Cursos { get; set; } = new();
         public List<SelectListItem> Grupos { get; set; } = new();
 

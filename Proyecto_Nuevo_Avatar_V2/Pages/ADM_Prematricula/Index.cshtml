@@ -16,7 +16,7 @@
 <form method="get" id="filtroForm" class="mb-4">
     <div class="row g-3 align-items-center">
         <div class="col-md-2">
-            <label for="FiltroPeriodo" class="form-label">Tipo</label>
+            <label for="FiltroPeriodo" class="form-label">Periodo</label>
             <select id="FiltroPeriodo" name="FiltroPeriodo" class="form-select">
                 <option value="">Seleccione un Periodo</option>
                 @foreach (var tipos_per in Model.Periodos)
@@ -26,6 +26,35 @@
                     </option>
                 }
             </select>
+        </div>
+        <div class="col-md-2">
+            <label for="FiltroCarrera" class="form-label">Carrera</label>
+            <select id="FiltroCarrera" name="FiltroCarrera" class="form-select">
+                <option value="">Seleccione una Carrera</option>
+                @foreach (var tipos_car in Model.Carreras)
+                {
+                    <option value="@tipos_car.Nombre" selected="@(Model.FiltroCarrera == tipos_car.Nombre)">
+                        @tipos_car.Nombre
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="FiltroCurso" class="form-label">Curso</label>
+            <select id="FiltroCurso" name="FiltroCurso" class="form-select">
+                <option value="">Seleccione un Curso</option>
+                @foreach (var tipos_per in Model.Cursos)
+                {
+                    <option value="@tipos_per.Nombre" selected="@(Model.FiltroCurso == tipos_per.Nombre)">
+                        @tipos_per.Nombre
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="FiltroEstudiante" class="form-label">Estudiante</label>
+            <input type="text" id="FiltroEstudiante" name="FiltroEstudiante" class="form-control"
+                   value="@Model.FiltroEstudiante" placeholder="Digite la identificacion" />
         </div>
     </div>
 

@@ -9,16 +9,20 @@ namespace Proyecto_Nuevo_Avatar_V2.Pages.ADM_Prematricula
     {
         private readonly ILoginApiClient _loginApiClient;
         private readonly IPrematriculaApiClient _prematriculaApiClient;
+        private readonly ICarreraApiClient _carreraApiClient;
+        private readonly ICursoApiClient _cursosApiClient;
         private readonly IPeriodoApiClient _periodoApiClient;
         private readonly IConfiguration _configuration;
 
 
-        public IndexModel(ILoginApiClient loginApiClient, IPrematriculaApiClient prematriculaApiClient,IPeriodoApiClient periodoApiClient, IConfiguration configuration)
+        public IndexModel(ILoginApiClient loginApiClient, IPrematriculaApiClient prematriculaApiClient,IPeriodoApiClient periodoApiClient, IConfiguration configuration, ICarreraApiClient carreraApiClient,ICursoApiClient cursoApiClient)
         {
             _loginApiClient = loginApiClient;
             _prematriculaApiClient = prematriculaApiClient;
             _periodoApiClient = periodoApiClient;
             _configuration = configuration;
+            _carreraApiClient = carreraApiClient;
+            _cursosApiClient = cursoApiClient;
         }
       
         #region "Paginación"
@@ -65,12 +69,17 @@ namespace Proyecto_Nuevo_Avatar_V2.Pages.ADM_Prematricula
         #region Listas 
         public List<Prematricula> PrematriculaPaginadas { get; set; } = new();
         public List<Prematricula> Prematriculas { get; set; } = new();
+        public List<Carrera> Carreras { get; set; } = new();
         public List<Periodo> Periodos { get; set; } = new();
+        public List<Curso> Cursos { get; set; } = new();
 
         #endregion
 
         #region "Filtros de búsqueda"
         [BindProperty(SupportsGet = true)] public string FiltroPeriodo { get; set; }
+        [BindProperty(SupportsGet = true)] public string FiltroCarrera { get; set; }
+        [BindProperty(SupportsGet = true)] public string FiltroCurso { get; set; }
+        [BindProperty(SupportsGet = true)] public string FiltroEstudiante { get; set; }
 
         #endregion
         public async Task<IActionResult> OnGetAsync(int numeroPagina = 1)
@@ -85,23 +94,41 @@ namespace Proyecto_Nuevo_Avatar_V2.Pages.ADM_Prematricula
             if (token == null) return RedirectToPage("/Login/Login");
 
             var periodosTask = _periodoApiClient.ObtenerTodosAsync(token);
+            var carrerasTask = _carreraApiClient.ObtenerTodasCarrerasAsync(token);   
+            var cursosTask = _cursosApiClient.ObtenerTodosAsync(token);
             var prematriculasTask = _prematriculaApiClient.Obtener_Todas_Prematriculas(token);
 
-            await Task.WhenAll(periodosTask, prematriculasTask);
+            await Task.WhenAll(periodosTask, prematriculasTask,carrerasTask,cursosTask);
 
             Periodos = periodosTask.Result ?? new List<Periodo>();
+            Carreras = carrerasTask.Result ?? new List<Carrera>();
+            Cursos = cursosTask.Result ?? new List<Curso>();
             var todasPrematriculas = prematriculasTask.Result ?? new List<Prematricula>();
+
+            var query = todasPrematriculas.AsQueryable();
 
             if (!string.IsNullOrEmpty(FiltroPeriodo))
             {
-                Prematriculas = todasPrematriculas
-                    .Where(p => p.Id_Periodo == FiltroPeriodo)
-                    .ToList();
+                query = query.Where(p => p.Id_Periodo == FiltroPeriodo);
             }
-            else
+
+            if (!string.IsNullOrEmpty(FiltroCarrera))
             {
-                Prematriculas = todasPrematriculas;
+                query = query.Where(p => p.carrera == FiltroCarrera);
             }
+
+            if (!string.IsNullOrEmpty(FiltroCurso))
+            {
+                query = query.Where(p => p.curso == FiltroCurso);
+            }
+
+            if (!string.IsNullOrEmpty(FiltroEstudiante))
+            {
+                query = query.Where(p => p.numero_identificacion.Contains(FiltroEstudiante)); 
+            }
+
+            Prematriculas = query.ToList();
+
 
             TotalRegistros = Prematriculas.Count;
             TotalPaginas = (int)Math.Ceiling(TotalRegistros / (double)TamanoPagina);
