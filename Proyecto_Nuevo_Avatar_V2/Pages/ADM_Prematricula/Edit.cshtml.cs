@@ -150,9 +150,8 @@ namespace Proyecto_Nuevo_Avatar_V2.Pages.ADM_Prematricula
                 await CargarListasAsync(token, PrematriculaEditada);
                 return Page(); 
             }
+            return Page();
 
-            // Si salió bien
-            return RedirectToPage("Index");
         }
 
     }
