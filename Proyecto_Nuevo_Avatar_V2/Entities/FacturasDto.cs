@@ -29,6 +29,25 @@ namespace Proyecto_Nuevo_Avatar_V2.Entities
         public string Id_Periodo { get; set; }
     }
 
+
+    public class MatriculaCompletaDto
+    {
+        public int Id_Matricula { get; set; }
+        public string Curso { get; set; } = string.Empty;
+        public string Grupo { get; set; } = string.Empty;
+        public EstudianteDto Estudiante { get; set; } = new();
+    }
+
+    public class EstudianteDto
+    {
+        public string Numero_Identificacion { get; set; } = string.Empty;
+        public string Tipo_Identificacion { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Nombre { get; set; } = string.Empty;
+    }
+
+
+
     public class DetalleFacturaDto
     {
         [JsonPropertyName("iD_Detalle_Factura")]

@@ -1,0 +1,223 @@
+﻿@page "{id}"
+@model Proyecto_Nuevo_Avatar_V2.Pages.ADM_Expedientes.EditModel
+@{
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/ADM_Usuarios.css" />
+
+<h2 class="text-center">
+    <i class="bi bi-pencil-square"></i> Editar Expediente
+</h2>
+
+<div class="card shadow p-4">
+    <form method="post">
+
+        <!-- Número de Identificación (PK) -->
+        <div class="form-group mb-3">
+            <label class="form-label">Número de Identificación</label>
+            <input asp-for="ExpedienteEditado.numero_identificacion"
+                   class="form-control"
+                   readonly />
+            <span asp-validation-for="ExpedienteEditado.numero_identificacion" class="text-danger"></span>
+        </div>
+
+        <!-- Tipo Identificación -->
+        <div class="form-group mb-3">
+            <label class="form-label">Tipo de Identificación</label>
+            <input asp-for="ExpedienteEditado.tipo_identificacion"
+                   class="form-control"
+                   readonly />
+        </div>
+
+        <!-- Nombre -->
+        <div class="form-group mb-3">
+            <label class="form-label">Nombre</label>
+            <input asp-for="ExpedienteEditado.nombre" class="form-control" />
+            <span asp-validation-for="ExpedienteEditado.nombre" class="text-danger"></span>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group mb-3">
+            <label class="form-label">Correo Electrónico</label>
+            <input asp-for="ExpedienteEditado.email" class="form-control" />
+            <span asp-validation-for="ExpedienteEditado.email" class="text-danger"></span>
+        </div>
+
+        <!-- Fecha Nacimiento -->
+        <div class="form-group mb-3">
+            <label class="form-label">Fecha de Nacimiento</label>
+            <input asp-for="ExpedienteEditado.fecha_nacimiento"
+                   type="date"
+                   class="form-control" />
+            <span asp-validation-for="ExpedienteEditado.fecha_nacimiento" class="text-danger"></span>
+        </div>
+
+        <!-- Provincia -->
+        <div class="form-group mb-3">
+            <label class="form-label">Provincia</label>
+            <select id="ProvinciaSelect" class="form-select">
+                <option value="">Seleccione una provincia</option>
+                @foreach (var p in Model.Provincias)
+                {
+                    <option value="@p.id_provincia">@p.nombre</option>
+                }
+            </select>
+        </div>
+
+        <!-- Cantón -->
+        <div class="form-group mb-3">
+            <label class="form-label">Cantón</label>
+            <select id="CantonSelect" class="form-select" disabled>
+                <option value="">Seleccione un cantón</option>
+            </select>
+        </div>
+
+        <!-- Distrito -->
+        <div class="form-group mb-3">
+            <label class="form-label">Distrito</label>
+            <select id="DistritoSelect" asp-for="ExpedienteEditado.id_distrito" class="form-select" disabled>
+                <option value="">Seleccione un distrito</option>
+            </select>
+        </div>
+
+        <!-- Teléfono -->
+        <div class="form-group mb-3">
+            <label class="form-label">Teléfono</label>
+            <input asp-for="ExpedienteEditado.telefono" class="form-control" />
+            <span asp-validation-for="ExpedienteEditado.telefono" class="text-danger"></span>
+        </div>
+
+        <!-- Otras Señas -->
+        <div class="form-group mb-3">
+            <label class="form-label">Otras Señas</label>
+            <textarea asp-for="ExpedienteEditado.otras_senas"
+                      class="form-control"
+                      rows="3"></textarea>
+            <span asp-validation-for="ExpedienteEditado.otras_senas" class="text-danger"></span>
+        </div>
+
+        <!-- Botones -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-save"></i> Guardar
+            </button>
+            <a asp-page="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left-circle"></i> Volver
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Modal de Resultados -->
+<div class="modal fade" id="resultModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" id="resultModalHeader">
+                <h5 class="modal-title" id="resultModalLabel">Resultado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="resultModalBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mensaje = @Html.Raw(Json.Serialize(TempData["Resultado"]));
+            const tipo = "@TempData["TipoMensaje"]";
+            const redireccion = "@TempData["Redireccion"]";
+
+            if (mensaje && mensaje.trim() !== "") {
+                const modal = new bootstrap.Modal(document.getElementById("resultModal"));
+                const header = document.getElementById("resultModalHeader");
+
+                header.className = tipo === "exito"
+                    ? "modal-header bg-success text-white"
+                    : "modal-header bg-danger text-white";
+
+                document.getElementById("resultModalBody").textContent = mensaje;
+                document.getElementById("resultModalLabel").textContent =
+                    tipo === "exito" ? "Éxito" : "Error";
+
+                modal.show();
+
+                document
+                    .getElementById("resultModal")
+                    .addEventListener('hidden.bs.modal', function () {
+                        if (tipo === "exito" && redireccion) {
+                            window.location.href = `/ADM_Expedientes/${redireccion}`;
+                        }
+                    });
+            }
+        });
+    </script>
+
+
+
+
+
+    <script>
+        const provinciaSelect = document.getElementById('ProvinciaSelect');
+        const cantonSelect = document.getElementById('CantonSelect');
+        const distritoSelect = document.getElementById('DistritoSelect');
+
+        provinciaSelect.addEventListener('change', async () => {
+            const provinciaNombre = provinciaSelect.options[provinciaSelect.selectedIndex].text;
+
+            cantonSelect.innerHTML = '<option value="">Cargando...</option>';
+            cantonSelect.disabled = true;
+            distritoSelect.innerHTML = '<option value="">Seleccione un distrito</option>';
+            distritoSelect.disabled = true;
+
+            if (!provinciaNombre) {
+                cantonSelect.innerHTML = '<option value="">Seleccione un cantón</option>';
+                return;
+            }
+
+            // Fetch cantones usando el nombre de la provincia
+            const res = await fetch(`?handler=Cantones&provincia=${encodeURIComponent(provinciaNombre)}`);
+            const cantones = await res.json();
+
+            cantonSelect.innerHTML = '<option value="">Seleccione un cantón</option>';
+            cantones.forEach(c => {
+                cantonSelect.innerHTML += `<option value="${c.nombre}">${c.nombre}</option>`;
+            });
+            cantonSelect.disabled = false;
+        });
+
+        cantonSelect.addEventListener('change', async () => {
+            const provinciaNombre = provinciaSelect.options[provinciaSelect.selectedIndex].text;
+            const cantonNombre = cantonSelect.value;
+
+            distritoSelect.innerHTML = '<option value="">Cargando...</option>';
+            distritoSelect.disabled = true;
+
+            if (!cantonNombre) {
+                distritoSelect.innerHTML = '<option value="">Seleccione un distrito</option>';
+                return;
+            }
+
+            // Fetch distritos usando nombre de provincia y nombre de cantón
+            const res = await fetch(`?handler=Distritos&provincia=${encodeURIComponent(provinciaNombre)}&canton=${encodeURIComponent(cantonNombre)}`);
+            const distritos = await res.json();
+
+            distritoSelect.innerHTML = '<option value="">Seleccione un distrito</option>';
+            distritos.forEach(d => {
+                distritoSelect.innerHTML += `<option value="${d.id_distrito}">${d.nombre_distrito}</option>`;
+            });
+            distritoSelect.disabled = false;
+        });
+    </script>
+
+
+}

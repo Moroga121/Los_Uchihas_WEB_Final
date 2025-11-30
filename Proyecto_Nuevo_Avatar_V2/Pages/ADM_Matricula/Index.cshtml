@@ -1,0 +1,194 @@
+﻿@page
+@model Proyecto_Nuevo_Avatar_V2.Pages.ADM_Matricula.IndexModel
+@{
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/ADM_Usuarios.css" />
+
+<h2 class="text-center">Gestión de Matriculas</h2>
+
+
+<!-- Prematriculas -->
+
+<h2 class="text-center mt-5">Tabla de Prematriculas</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>ID Prematricula</th>
+            <th>Numero Identificacion</th>
+            <th>Carrera</th>
+            <th>Curso</th>
+            <th>Observaciones</th>
+            <th>Periodo</th>
+            <th class="text-center">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.PrematriculasPaginadas.Any())
+        {
+            foreach (var prematricula in Model.PrematriculasPaginadas)
+            {
+                <tr>
+                    <td>@prematricula.id_prematricula</td>
+                    <td class="text-break">@prematricula.numero_identificacion</td>
+                    <td class="text-break">@prematricula.carrera</td>
+                    <td class="text-break">@prematricula.curso</td>
+                    <td class="text-break">@prematricula.observaciones</td>
+                    <td>@prematricula.Id_Periodo</td>
+                    <td class="text-center">
+                        <a asp-page="Create"
+                           asp-route-idPrematricula="@prematricula.id_prematricula"
+                           class="btn btn-success btn-sm">
+                            <i class="bi bi-check-circle"></i> Matricular
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="7" class="text-center">
+                    No hay prematrículas registradas.
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.TotalPaginas > 1)
+{
+    <div id="paginacion" class="my-3 d-flex justify-content-center">
+        <nav aria-label="Paginación de prematrículas">
+            <ul class="pagination pagination-sm mb-0">
+                @if (Model.PaginaActual > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="?numeroPagina=@(Model.PaginaActual - 1)">&laquo;</a>
+                    </li>
+                }
+
+                @for (int i = 1; i <= Model.TotalPaginas; i++)
+                {
+                    <li class="page-item @(i == Model.PaginaActual ? "active" : "")">
+                        <a class="page-link" href="?numeroPagina=@i">@i</a>
+                    </li>
+                }
+
+                @if (Model.PaginaActual < Model.TotalPaginas)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="?numeroPagina=@(Model.PaginaActual + 1)">&raquo;</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+}
+
+<hr class="my-5" />
+
+<!-- Matriculas= -->
+
+<h2 class="text-center">Matriculados</h2>
+
+<form method="get" id="filtroForm" class="mb-4">
+
+    <div class="row g-3 align-items-center">
+
+        <!-- Filtro Curso -->
+        <div class="col-md-2">
+            <label for="CursoFiltro" class="form-label">Curso</label>
+            <input type="text" class="form-control" id="CursoFiltro" name="CursoFiltro" value="@Model.CursoFiltro" placeholder="Ej: Matemática Básica" />
+        </div>
+
+        <!-- Filtro Grupo -->
+        <div class="col-md-3">
+            <label for="GrupoFiltro" class="form-label">Grupo</label>
+            <input type="text" class="form-control" id="GrupoFiltro" name="GrupoFiltro" value="@Model.GrupoFiltro" placeholder="Ej: G1" />
+        </div>
+
+       
+
+    </div>
+
+    <div class="mt-3 text-end">
+
+        <button type="submit" class="btn btn-success" id="btnBuscarMatricula">
+            <i class="bi bi-search"></i> Buscar
+        </button>
+
+        <a asp-page="Index" class="btn btn-secondary">
+            <i class="bi bi-eraser"></i> Limpiar
+        </a>
+
+    </div>
+
+</form>
+
+
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>ID Matrícula</th>
+            <th>Identificación</th>
+            <th>Nombre</th>
+            <th>Curso</th>
+            <th>Grupo</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Matriculas.Any())
+        {
+            foreach (var m in Model.Matriculas)
+            {
+                <tr>
+                    <td>@m.Id_Matricula</td>
+                    <td>@m.Estudiante.Numero_Identificacion</td>
+                    <td>@m.Estudiante.Nombre</td>
+                    <td>@m.Curso</td>
+                    <td>@m.Grupo</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center">
+                    No hay matriculados con los filtros aplicados.
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="mt-3 d-flex justify-content-start">
+    <form method="post" asp-page-handler="ExportCSV">
+        <input type="hidden" name="CursoFiltro" value="@Model.CursoFiltro" />
+        <input type="hidden" name="GrupoFiltro" value="@Model.GrupoFiltro" />
+
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-file-earmark-spreadsheet"></i> Exportar CSV
+        </button>
+    </form>
+</div>
+
+
+
+<div class="modal fade" id="resultModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" id="resultModalHeader">
+                <h5 class="modal-title" id="resultModalLabel">Resultado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="resultModalBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
