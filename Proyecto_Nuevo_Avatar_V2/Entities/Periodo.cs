@@ -13,7 +13,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Entities
         [Required(ErrorMessage = "El año es obligatorio.")]
         [Range(2000, 2100, ErrorMessage = "El año debe ser del 2000 en adelante.")]
         [JsonPropertyName("año")]
-        public int Año { get; set; } = DateTime.Now.Year;
+        public int? Año { get; set; } = DateTime.Now.Year;
 
         [Required(ErrorMessage = "El número de periodo es obligatorio.")]
         [Range(1, 4, ErrorMessage = "El número de periodo debe estar entre 1 y 4.")]

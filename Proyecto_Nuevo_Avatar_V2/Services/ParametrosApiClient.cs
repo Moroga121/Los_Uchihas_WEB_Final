@@ -16,12 +16,13 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
             try
             {
                 // Preparar el request sin codificar
-                var request = new HttpRequestMessage(HttpMethod.Get, "/parametro");
+                var request = new HttpRequestMessage(HttpMethod.Get, "parametro");
                 request.Headers.Add("access_token", accessToken); // Header exacto que espera la API
 
                 var response = await _http.SendAsync(request, ct);
                 if (!response.IsSuccessStatusCode)
                 {
+                    
                     var content = await response.Content.ReadAsStringAsync(ct);
                     Console.WriteLine($"Error HTTP {(int)response.StatusCode}: {response.ReasonPhrase}, contenido: {content}");
                     return null;
@@ -40,7 +41,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
 
         public async Task<Parametrizacion?> ObtenerParametrolPorId(string id, string accessToken, CancellationToken ct = default)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/parametro/{id}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"parametro/{id}");
             request.Headers.Add("access_token", accessToken);
 
             var response = await _http.SendAsync(request, ct);

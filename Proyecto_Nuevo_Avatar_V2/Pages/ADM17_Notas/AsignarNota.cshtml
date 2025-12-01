@@ -13,7 +13,7 @@
 
 @if (!Model.TieneDesglose)
 {
-    <p>Sin desglose definido para este curso.</p>
+    <p>Sin desglose.</p>
 
     <a asp-page="/ADM17_Notas/Index" class="btn btn-secondary">
         Volver
@@ -21,7 +21,7 @@
 }
 else if (!Model.TieneNotas && !Model.ModoAgregar)
 {
-    <p>Este estudiante aún no tiene notas.</p>
+    <p>Sin notas.</p>
 
     <a asp-page="./AsignarNota"
        asp-route-curso="@Model.Curso"

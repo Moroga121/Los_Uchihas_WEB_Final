@@ -13,7 +13,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
 
         public async Task<List<MatriculaCompletaDto>?> Obtener_Matriculados_Por_Curso_Grupo(string curso, string grupo, string accessToken, CancellationToken ct = default)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/matricula/curso-grupo?curso={Uri.EscapeDataString(curso)}&grupo={Uri.EscapeDataString(grupo)}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"matricula/curso-grupo?curso={Uri.EscapeDataString(curso)}&grupo={Uri.EscapeDataString(grupo)}");
 
             request.Headers.Add("access_token", accessToken);
 
@@ -28,7 +28,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
 
         public async Task<List<MatriculaCompletaDto>?> Obtener_Todas_Matriculas(string accessToken, CancellationToken ct = default)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "/matricula");
+            var request = new HttpRequestMessage(HttpMethod.Get, "matricula");
             request.Headers.Add("access_token", accessToken);
 
             var response = await _http.SendAsync(request, ct);
@@ -40,7 +40,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
 
         public async Task<MatriculaDto?> ObtenerMatriculaPorId(int id, string accessToken, CancellationToken ct = default)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/matricula/{id}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"matricula/{id}");
             request.Headers.Add("access_token", accessToken);
 
             var response = await _http.SendAsync(request, ct);
@@ -52,7 +52,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
         public async Task<(bool Exito, string Mensaje, MatriculaDto? Datos)> CRUDMatricula(MatriculaDto matricula, string accessToken, string accion, CancellationToken ct = default)
         {
             HttpMethod method;
-            string endpoint = "/matricula";
+            string endpoint = "matricula";
 
             switch (accion)
             {

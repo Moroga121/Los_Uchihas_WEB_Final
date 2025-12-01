@@ -15,7 +15,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
             try
             {
                 // Preparar el request sin codificar
-                var request = new HttpRequestMessage(HttpMethod.Get, "/Prematricula");
+                var request = new HttpRequestMessage(HttpMethod.Get, "Prematricula");
                 request.Headers.Add("access_token", accessToken); // Header exacto que espera la API
 
                 var response = await _http.SendAsync(request, ct);
@@ -37,7 +37,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
         }
         public async Task<Prematricula?> ObtenerPrematriculaPorId(string id, string accessToken, CancellationToken ct = default)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/Prematricula/{id}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"Prematricula/{id}");
             request.Headers.Add("access_token", accessToken);
 
             var response = await _http.SendAsync(request, ct);
@@ -57,7 +57,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
         public async Task<(bool Exito, string Mensaje, Prematricula? Datos)> CRUDPrematricula(Prematricula prematricula, string accessToken, string accion, CancellationToken ct = default)
         {
             HttpMethod method;
-            string endpoint = "/Prematricula";
+            string endpoint = "Prematricula";
 
             // Determinar método HTTP según la acción
             switch (accion)

@@ -17,7 +17,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
         #region "Desglose "
         public async Task<(bool Exito, string Mensaje,DesgloseRubro?)> CargarDesglose(DesgloseRubro desglose,string accessToken,CancellationToken ct = default)
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, "/cargardesglose");
+            var request = new HttpRequestMessage(HttpMethod.Post, "cargardesglose");
             request.Headers.Add("access_token", accessToken);  
             request.Content = JsonContent.Create(desglose);
 
@@ -55,7 +55,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
             try
             {
                 // Preparar el request sin codificar
-                var request = new HttpRequestMessage(HttpMethod.Get, $"/obtenerdesglose/{curso}/{grupo}");
+                var request = new HttpRequestMessage(HttpMethod.Get, $"obtenerdesglose/{curso}/{grupo}");
                 request.Headers.Add("access_token", accessToken); // Header exacto que espera la API
 
                 var response = await _http.SendAsync(request, ct);
@@ -81,7 +81,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
         public async Task<(bool Exito, string Mensaje, Notas?)> AsignarNota(Notas nota,string accion, string accessToken, CancellationToken ct = default)
         {
             HttpMethod method;
-            string endpoint = "/asignarnotarubro";
+            string endpoint = "asignarnotarubro";
 
             // Determinar método HTTP según la acción
             switch (accion)
@@ -135,7 +135,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
         {
             try
             {
-                var url = $"/obtenernotas/{Uri.EscapeDataString(identificacion)}/{Uri.EscapeDataString(curso)}";
+                var url = $"obtenernotas/{Uri.EscapeDataString(identificacion)}/{Uri.EscapeDataString(curso)}";
 
                 var request = new HttpRequestMessage(HttpMethod.Get, url);
                 request.Headers.Add("access_token", accessToken);

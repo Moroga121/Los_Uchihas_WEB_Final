@@ -15,7 +15,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
         #region Obtener / Buscar
         public async Task<List<Institucion>?> ObtenerInstitucionesAsync(string accessToken, CancellationToken ct = default)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "/api/institucion/");
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/institucion/");
             request.Headers.Add("access_token", accessToken);
 
             var response = await _http.SendAsync(request, ct);
@@ -27,7 +27,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
 
         public async Task<List<Institucion>?> BuscarInstitucionesPorNombreAsync(string nombre, string accessToken, CancellationToken ct = default)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/api/institucion/buscar?nombre={Uri.EscapeDataString(nombre)}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/institucion/buscar?nombre={Uri.EscapeDataString(nombre)}");
             request.Headers.Add("access_token", accessToken);
 
             var response = await _http.SendAsync(request, ct);
@@ -39,7 +39,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
 
         public async Task<Institucion?> ObtenerInstitucionPorIdAsync(string id, string accessToken, CancellationToken ct = default)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/api/institucion/{id}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/institucion/{id}");
             request.Headers.Add("access_token", accessToken);
 
             var response = await _http.SendAsync(request, ct);
@@ -54,7 +54,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
         public async Task<(bool Exito, string Mensaje, Institucion? Datos)> CRUDInstitucionAsync(Institucion institucion, string accion, string accessToken, CancellationToken ct = default)
         {
             HttpMethod method;
-            string endpoint = "/api/institucion";
+            string endpoint = "api/institucion";
 
             switch (accion)
             {

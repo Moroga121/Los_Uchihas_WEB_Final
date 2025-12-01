@@ -14,7 +14,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
 
         public async Task<List<Carrera>?> ObtenerTodasCarrerasAsync(string accessToken, CancellationToken ct = default)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "/api/carrera/");
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/carrera/");
             request.Headers.Add("access_token", accessToken);
 
             var response = await _http.SendAsync(request, ct);
@@ -26,7 +26,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
 
         public async Task<List<Carrera>?> ObtenerCarrerasPorInstitucionAsync(string idInstitucion, string accessToken, CancellationToken ct = default)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/api/carrera/institucion/{idInstitucion}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/carrera/institucion/{idInstitucion}");
             request.Headers.Add("access_token", accessToken);
 
             var response = await _http.SendAsync(request, ct);
@@ -38,7 +38,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
 
         public async Task<Carrera?> ObtenerCarreraPorIdAsync(string id, string accessToken, CancellationToken ct = default)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/api/carrera/{id}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/carrera/{id}");
             request.Headers.Add("access_token", accessToken);
 
             var response = await _http.SendAsync(request, ct);
@@ -51,7 +51,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
         public async Task<(bool Exito, string Mensaje, Carrera? Datos)> CRUDCarreraAsync(Carrera carrera, string accion, string accessToken, CancellationToken ct = default)
         {
             HttpMethod method;
-            string endpoint = "/api/carrera";
+            string endpoint = "api/carrera";
             switch (accion)
             {
                 case "Insert":

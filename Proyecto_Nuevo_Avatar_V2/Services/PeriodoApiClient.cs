@@ -19,7 +19,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
         public async Task<List<Periodo>> ObtenerTodosAsync(string accessToken)
         {
             var baseUrl = _config["PeriodoApi:BaseUrl"];
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/api/periodo");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/periodo");
             request.Headers.Add("access_token", accessToken);
 
             var response = await _httpClient.SendAsync(request);
@@ -33,7 +33,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
         public async Task<Periodo?> ObtenerPorIdAsync(string id, string accessToken)
         {
             var baseUrl = _config["PeriodoApi:BaseUrl"];
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/api/periodo/{id}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/periodo/{id}");
             request.Headers.Add("access_token", accessToken);
 
             var response = await _httpClient.SendAsync(request);
@@ -59,7 +59,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
                     "delete" => HttpMethod.Delete,
                     _ => HttpMethod.Post
                 },
-                $"{baseUrl}/api/periodo{(accion == "Delete" ? "/" + periodo.ID_Periodo : "")}"
+                $"api/periodo{(accion == "Delete" ? "/" + periodo.ID_Periodo : "")}"
             );
 
             request.Headers.Add("access_token", accessToken);

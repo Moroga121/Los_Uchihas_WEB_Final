@@ -18,7 +18,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
             try
             {
                 // Preparar el request sin codificar
-                var request = new HttpRequestMessage(HttpMethod.Get, "/expediente");
+                var request = new HttpRequestMessage(HttpMethod.Get, "expediente");
                 request.Headers.Add("access_token", accessToken); 
 
                 var response = await _http.SendAsync(request, ct);
@@ -40,7 +40,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
         }
         public async Task<ExpedienteDto?> ObtenerExpedientePorId(string id, string accessToken, CancellationToken ct = default)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/expediente/{id}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"expediente/{id}");
             request.Headers.Add("access_token", accessToken);
 
             var response = await _http.SendAsync(request, ct);
@@ -60,7 +60,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
         public async Task<(bool Exito, string Mensaje, ExpedienteDto? Datos)> CRUDExpedientes(ExpedienteDto expediente, string accessToken, string accion, CancellationToken ct = default)
         {
             HttpMethod method;
-            string endpoint = "/expediente";
+            string endpoint = "expediente";
 
             // Determinar método HTTP según la acción
             switch (accion)

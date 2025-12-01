@@ -19,7 +19,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
         public async Task<List<Curso>> ObtenerTodosAsync(string accessToken)
         {
             var baseUrl = _config["CursoApi:BaseUrl"];
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/api/curso");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}api/curso");
             request.Headers.Add("access_token", accessToken);
 
             var response = await _httpClient.SendAsync(request);
@@ -33,7 +33,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
         public async Task<Curso?> ObtenerPorIdAsync(string id, string accessToken)
         {
             var baseUrl = _config["CursoApi:BaseUrl"];
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/api/curso/{id}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}api/curso/{id}");
             request.Headers.Add("access_token", accessToken);
 
             var response = await _httpClient.SendAsync(request);
@@ -59,7 +59,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
                     "delete" => HttpMethod.Delete,
                     _ => HttpMethod.Post
                 },
-                $"{baseUrl}/api/curso{(accion == "Delete" ? "/" + curso.ID_Curso : "")}"
+                $"{baseUrl}api/curso{(accion == "Delete" ? "/" + curso.ID_Curso : "")}"
             );
 
             request.Headers.Add("access_token", accessToken);

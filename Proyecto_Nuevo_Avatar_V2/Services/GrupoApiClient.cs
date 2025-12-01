@@ -14,7 +14,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
 
         public async Task<List<Grupo>?> ObtenerTodosGruposAsync(string accessToken)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "/api/grupo/");
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/grupo/");
             request.Headers.Add("access_token", accessToken);
 
             var response = await _http.SendAsync(request);
@@ -26,7 +26,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
 
         public async Task<Grupo?> ObtenerGrupoPorIdAsync(string id, string accessToken)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/api/grupo/{id}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/grupo/{id}");
             request.Headers.Add("access_token", accessToken);
 
             var response = await _http.SendAsync(request);
@@ -39,7 +39,7 @@ namespace Proyecto_Nuevo_Avatar_V2.Services
         public async Task<(bool Exito, string Mensaje, Grupo? Datos)> CRUDGrupoAsync(Grupo grupo, string accion, string accessToken)
         {
             HttpMethod method;
-            string endpoint = "/api/grupo";
+            string endpoint = "api/grupo";
             switch (accion)
             {
                 case "Insert":
