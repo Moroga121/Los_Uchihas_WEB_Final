@@ -146,6 +146,18 @@ namespace Proyecto_Nuevo_Avatar_V2.Pages.ADM_Matricula
 
             Matriculas = await _matriculaApiClient.Obtener_Todas_Matriculas(token) ?? new List<MatriculaCompletaDto>();
 
+            //if (!string.IsNullOrWhiteSpace(CursoFiltro) && !string.IsNullOrWhiteSpace(GrupoFiltro))
+            //{
+
+            //    Matriculas = await _matriculaApiClient.Obtener_Matriculados_Por_Curso_Grupo(CursoFiltro, GrupoFiltro, token) ?? new List<MatriculaCompletaDto>();
+            //}
+            //else
+            //{
+            //    // Sin filtros traer todo
+            //    Matriculas = await _matriculaApiClient.Obtener_Todas_Matriculas(token) ?? new List<MatriculaCompletaDto>();
+
+            //}
+
             if (!string.IsNullOrWhiteSpace(CursoFiltro))
             {
                 Matriculas = Matriculas
