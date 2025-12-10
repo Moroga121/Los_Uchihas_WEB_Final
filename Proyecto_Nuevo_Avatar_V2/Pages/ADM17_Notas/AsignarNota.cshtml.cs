@@ -67,6 +67,10 @@ namespace Proyecto_Nuevo_Avatar_V2.Pages.ADM17_Notas
 
         public async Task<IActionResult> OnGetAsync(string curso, string grupo, string identificacion, bool agregar = false)
         {
+            ViewData["Nombre"] = HttpContext.Session.GetString("Nombre");
+            ViewData["Email"] = HttpContext.Session.GetString("Email");
+            ViewData["Rol"] = HttpContext.Session.GetString("Rol");
+
             ModoAgregar = agregar;
             var token = await GetValidAccessTokenAsync();
             if (token == null)
@@ -129,6 +133,10 @@ namespace Proyecto_Nuevo_Avatar_V2.Pages.ADM17_Notas
 
         public async Task<IActionResult> OnPostGuardar(string accion, int rowIndex)
         {
+            ViewData["Nombre"] = HttpContext.Session.GetString("Nombre");
+            ViewData["Email"] = HttpContext.Session.GetString("Email");
+            ViewData["Rol"] = HttpContext.Session.GetString("Rol");
+
             var token = await GetValidAccessTokenAsync();
             if (token == null)
                 return RedirectToPage("/Login/Login");

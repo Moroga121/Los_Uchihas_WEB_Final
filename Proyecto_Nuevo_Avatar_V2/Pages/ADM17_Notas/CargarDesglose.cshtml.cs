@@ -58,6 +58,10 @@ namespace Proyecto_Nuevo_Avatar_V2.Pages.ADM17_Notas
 
         public async Task<IActionResult> OnGetAsync(string curso, string grupo, bool nuevo = false)
         {
+            ViewData["Nombre"] = HttpContext.Session.GetString("Nombre");
+            ViewData["Email"] = HttpContext.Session.GetString("Email");
+            ViewData["Rol"] = HttpContext.Session.GetString("Rol");
+
             if (nuevo)
             {
                 TieneDesglose = true;
@@ -101,6 +105,10 @@ namespace Proyecto_Nuevo_Avatar_V2.Pages.ADM17_Notas
         }
         public async Task<IActionResult> OnPostGuardarAsync()
         {
+            ViewData["Nombre"] = HttpContext.Session.GetString("Nombre");
+            ViewData["Email"] = HttpContext.Session.GetString("Email");
+            ViewData["Rol"] = HttpContext.Session.GetString("Rol");
+
             // Validar token
             var token = await GetValidAccessTokenAsync();
             if (token == null)
